@@ -180,3 +180,4 @@ xyzservices
 yt-dlp
 zict
 zipp
+pip
