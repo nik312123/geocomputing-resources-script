@@ -380,6 +380,9 @@ run_command_conditional \
     --false-command "$bash_version_false_command" \
     --exit-if-false "true"
 
+# Installs git through homebrew if not already installed
+run_homebrew_install "git" "🐙"
+
 # Uninstalls Anaconda if it is installed
 anaconda_true_command="conda install anaconda-clean --yes && anaconda-clean --yes && { rm -rf "
 anaconda_true_command+="~/.anaconda_backup; rm -rf ~/anaconda3; rm -rf ~/opt/anaconda3; sudo rm "
