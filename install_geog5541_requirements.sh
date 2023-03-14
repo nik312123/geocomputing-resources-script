@@ -309,8 +309,8 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     fi
     
     if $echo_on; then
-        printf "> printf -v load_homebrew_string \"\\\neval \\\\\"\\\$(\\\\\"%%s/bin/brew\\\\\" "
-        printf "shellenv)\\\\\"\\\n\\\" \"\$brew_prefix\"\n\n"
+        printf "> printf -v load_homebrew_string \"\\\\\\\neval \\\\\"\\\$(\\\\\"%%s/bin/brew\\\\\""
+        printf " shellenv)\\\\\"\\\\\\\n\" \"\$brew_prefix\"\n\n"
     fi
     
     printf -v load_homebrew_string "\\neval \"\$(\"%s/bin/brew\" shellenv)\"\\n" "$brew_prefix"
