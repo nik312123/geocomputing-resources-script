@@ -375,6 +375,19 @@ run_command_conditional \
 # Installs python3 through Homebrew if not already installed
 run_homebrew_install "python3" "🐍"
 
+# Updates pip if not already up to date
+run_command_conditional \
+    --check-command "true" \
+    --true-print-befor $'Ensuring pip is up to date... 📚\n\n' \
+    --true-print-after $'pip is up to date! ✅\n\n' \
+    --true-echo-newline "true" \
+    --true-command "python3 -m pip install --upgrade pip" \
+    --false-print-before "" \
+    --false-print-after "" \
+    --false-echo-newline "false" \
+    --false-command "" \
+    --exit-if-false "false"
+
 # Sets up pip and python aliases if not already set up
 run_command_conditional \
     --check-command "type pip" \
