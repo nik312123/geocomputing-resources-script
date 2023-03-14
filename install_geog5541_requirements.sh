@@ -390,7 +390,7 @@ run_command_conditional \
 
 # Sets up pip and python aliases if not already set up
 run_command_conditional \
-    --check-command "type pip" \
+    --check-command "type pip && type python" \
     --true-print-before $'pip and python are properly aliased. ✅\n\n' \
     --true-print-after "" \
     --true-echo-newline "false" \
