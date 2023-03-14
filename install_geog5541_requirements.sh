@@ -396,7 +396,7 @@ run_command_conditional \
     --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
     --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
     --true-echo-newline "true" \
-    --true-command "python3 -m pip install --upgrade -r \"https://gist.githubusercontent.com/nik312123/5f6e7031c023d32881b4adbb2185d38a/raw/4b2f8340c428c8689b1cc468b9da64e9c5fcba97/requirements.txt\"" \
+    --true-command "python3 -m pip install --upgrade -r \"https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/requirements.txt\"" \
     --false-print-before "" \
     --false-print-after "" \
     --false-echo-newline "false" \
