@@ -244,8 +244,8 @@ run_command_conditional \
     --exit-if-false "true"
 
 # Installs homebrew if it does not already exist or updates it if it does
-homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew... (Please be patient. This '
-homebrew_true_before+=$'may take some time.) 🍺\n\n'
+homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew and its packages... (Please '
+homebrew_true_before+=$'be patient. This may take some time.) 🍺\n\n'
 homebrew_false_before=$'Homebrew was not found. ❌\n\nInstalling homebrew... (Please be patient. '
 homebrew_false_before+=$'This may take some time.) 🍺\n\n'
 homebrew_false_command="yes \"\" | INTERACTIVE=1 /bin/bash -c \"\$(curl -fsSL "
@@ -255,7 +255,7 @@ run_command_conditional \
     --true-print-before "$homebrew_true_before" \
     --true-print-after $'Homebrew is updated! ✅\n\n' \
     --true-echo-newline "true" \
-    --true-command "brew update" \
+    --true-command "brew update && brew upgrade && brew cleanup --prune=all -s" \
     --false-print-before "$homebrew_false_before" \
     --false-print-after $'\nHomebrew is installed! ✅\n\n' \
     --false-echo-newline "false" \
