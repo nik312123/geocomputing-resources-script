@@ -386,6 +386,7 @@ run_command_conditional \
     --false-print-after $'pip and python are properly aliased. ✅\n\n' \
     --false-echo-newline "false" \
     --false-command "printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/.bash_profile && printf 'alias python=\"python3\"\n' >> ~/.bash_profile && printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/.zprofile && printf 'alias python=\"python3\"\n' >> ~/.zprofile" \
+    --exit-if-false "false"
 
 # Installs gdal through Homebrew if not already installed
 run_homebrew_install "gdal" "🌎"
