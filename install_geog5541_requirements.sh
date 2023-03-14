@@ -378,7 +378,7 @@ run_homebrew_install "python3" "🐍"
 # Updates pip if not already up to date
 run_command_conditional \
     --check-command "true" \
-    --true-print-befor $'Ensuring pip is up to date... 📚\n\n' \
+    --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
     --true-print-after $'pip is up to date! ✅\n\n' \
     --true-echo-newline "true" \
     --true-command "python3 -m pip install --upgrade pip" \
