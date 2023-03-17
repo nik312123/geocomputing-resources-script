@@ -123,7 +123,7 @@ function run_command_conditional {
             return 1
         fi
     done
-        
+    
     # Checks if all the required arguments were passed
     for element in "${required_params_provided[@]}"; do
         if [ "$element" -eq 0 ]; then
