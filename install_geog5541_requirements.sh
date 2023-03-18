@@ -329,11 +329,11 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     
     # Adds Homebrew's binary directory to the beginning of your $PATH variable in your .bash_profile
     # and spits an error if it fails
-    try_running_command "printf "%s" \"\$load_homebrew_string\" >> ~/.bash_profile" "false"
+    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/.bash_profile" "false"
     
     # Adds Homebrew's binary directory to the beginning of your $PATH variable in your .zprofile and
     # spits an error if it fails
-    try_running_command "printf "%s" \"\$load_homebrew_string\" >> ~/.zprofile" "false"
+    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/.zprofile" "false"
     
     # Add Homebrew's binary directory to path for the purposes of the rest of this script as well
     eval "$("$brew_prefix/bin/brew" shellenv)"
