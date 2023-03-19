@@ -376,7 +376,7 @@ run_command_conditional \
     --false-print-before "$bash_false_before" \
     --false-print-after "$bash_false_after" \
     --false-echo-newline "true" \
-    --false-command "sudo sh -c 'printf \"\n\$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
+    --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
     --exit-if-false "false"
 
 # If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash is
