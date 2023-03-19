@@ -226,6 +226,15 @@ else
     echo_on=false
 fi
 
+# Gets the operating system type
+os_type=$(uname -s)
+
+# Checks if the operating system is supported
+if [ "$os_type" != "Darwin" ] && [ "$os_type" != "Linux" ]; then
+    printf "This script only supports macOS and Linux/WSL.\n\n"
+    exit 1
+fi
+
 # Installs Xcode Command Line Tools if they are not already installed
 xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command Line '
 xcode_false_before+=$'Tools... 🛠️\nFollow the prompt that pops up!\n\n'
