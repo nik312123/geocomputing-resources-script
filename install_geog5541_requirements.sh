@@ -252,6 +252,19 @@ if [ "$os_type" == "Darwin" ]; then
         --false-echo-newline "true" \
         --false-command "xcode-select --install" \
         --exit-if-false "true"
+# If the OS is Linux/WSL, then updates apt packages if they are not already up to date
+else
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Ensuring apt packages are up to date... 📦\n\n' \
+        --true-print-after $'Apt packages are up to date! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo apt update -y && sudo apt upgrade -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
 fi
 
 # Installs homebrew if it does not already exist or updates it if it does
