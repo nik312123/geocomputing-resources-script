@@ -252,7 +252,8 @@ if [ "$os_type" == "Darwin" ]; then
         --false-echo-newline "true" \
         --false-command "xcode-select --install" \
         --exit-if-false "true"
-# If the OS is Linux/WSL, then updates apt packages if they are not already up to date
+# If the OS is Linux/WSL, then updates apt packages if they are not already up to date and
+# installs linuxbrew dependencies if they are not already installed
 else
     run_command_conditional \
         --check-command "true" \
@@ -260,6 +261,18 @@ else
         --true-print-after $'Apt packages are up to date! ✅\n\n' \
         --true-echo-newline "true" \
         --true-command "sudo apt update -y && sudo apt upgrade -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+        
+        run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Installing linuxbrew dependencies... 🧱\n\n' \
+        --true-print-after $'Linuxbrew dependencies have been installed! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo apt install build-essential procps curl file git -y" \
         --false-print-before "" \
         --false-print-after "" \
         --false-echo-newline "false" \
