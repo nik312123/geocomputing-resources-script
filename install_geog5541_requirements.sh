@@ -366,7 +366,7 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     # file and spits an error if it fails
     try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$zsh_login_filename" "false"
     
-    printf "%s/bin/ is in your \$PATH! ✅\n\n" "$(brew --prefix)"
+    printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
     printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH.\n\n"
     exit 1
 fi
