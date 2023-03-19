@@ -283,6 +283,15 @@ if brew help >/dev/null 2>&1; then
     usr_bin_brew_bin_position_diff="$(( ${#remainder_brew_bin} - ${#remainder_usr_bin} ))"
 fi
 
+# Sets the shell login filenames based on the operating system
+if [ "$os_name" == "Darwin" ]; then
+    bash_login_filename=".bash_profile"
+    zsh_login_filename=".zprofile"
+else
+    bash_login_filename=".bashrc"
+    zsh_login_filename=".zshrc"
+fi
+
 # Checks to see if Homebrew's binary directory is in your path (and at least has a higher presence
 # than /usr/bin) and puts it at the beginning of your path if not
 if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
@@ -290,30 +299,30 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     printf "\$(brew --prefix)/bin/ is not in your \$PATH. ❌\n\n"
     printf "Adding \$(brew --prefix)/bin/ to your \$PATH... 📂\n\n"
     
-    # If ~/.bash_profile does not exist, create it!
+    # If the bash login file does not exist, create it!
     run_command_conditional \
-        --check-command "test -f ~/.bash_profile" \
+        --check-command "test -f ~/$bash_login_filename" \
         --true-print-before "" \
         --true-print-after "" \
         --true-echo-newline "false" \
         --true-command "" \
-        --false-print-before $'~/.bash_profile could not be found. Creating it for you... 📝\n\n' \
-        --false-print-after $'~/.bash_profile created!\n\n' \
+        --false-print-before $'~/.'"$bash_login_filename"$' could not be found. Creating it for you... 📝\n\n' \
+        --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
         --false-echo-newline "false" \
-        --false-command "touch ~/.bash_profile" \
+        --false-command "touch ~/$bash_login_filename" \
         --exit-if-false "false"
     
-    # If ~/.zprofile does not exist, create it!
+    # If the zsh login file does not exist, create it!
     run_command_conditional \
-        --check-command "test -f ~/.zprofile" \
+        --check-command "test -f ~/$zsh_login_filename" \
         --true-print-before "" \
         --true-print-after "" \
         --true-echo-newline "false" \
         --true-command "" \
-        --false-print-before $'~/.zprofile could not be found. Creating it for you... 📝\n\n' \
-        --false-print-after $'~/.zprofile created!\n\n' \
+        --false-print-before $'~/'"$zsh_login_filename"$' could not be found. Creating it for you... 📝\n\n' \
+        --false-print-after $'~/'"zsh_login_filename"$' created!\n\n' \
         --false-echo-newline "false" \
-        --false-command "touch ~/.zprofile" \
+        --false-command "touch ~/$zsh_login_filename" \
         --exit-if-false "false"
     
     # Retrieve brew prefix
@@ -336,13 +345,13 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     
     printf -v load_homebrew_string "\\neval \"\$(\"%s/bin/brew\" shellenv)\"\\n" "$brew_prefix"
     
-    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your .bash_profile
-    # and spits an error if it fails
-    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/.bash_profile" "false"
+    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash login
+    # file and spits an error if it fails
+    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$bash_login_filename" "false"
     
-    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your .zprofile and
-    # spits an error if it fails
-    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/.zprofile" "false"
+    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your zsh login
+    # file and spits an error if it fails
+    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$zsh_login_filename" "false"
     
     # Add Homebrew's binary directory to path for the purposes of the rest of this script as well
     eval "$("$brew_prefix/bin/brew" shellenv)"
@@ -428,10 +437,10 @@ run_command_conditional \
 # Sets up pip and python aliases if not already set up
 python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
 python_alias_false_before+=$'python... 🔗\n\n'
-python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/.bash_profile && "
-python_alias_false_command+="printf 'alias python=\"python3\"\n' >> ~/.bash_profile && "
-python_alias_false_command+="printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/.zprofile && "
-python_alias_false_command+="printf 'alias python=\"python3\"\n' >> ~/.zprofile"
+python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/$bash_login_filename "
+python_alias_false_command+="&& printf 'alias python=\"python3\"\n' >> ~/$bash_login_filename "
+python_alias_false_command+="&& printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/$zsh_login_filename"
+python_alias_false_command+=" && printf 'alias python=\"python3\"\n' >> ~/$zsh_login_filename"
 run_command_conditional \
     --check-command "type pip && type python" \
     --true-print-before $'pip and python are properly aliased. ✅\n\n' \
