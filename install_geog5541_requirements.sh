@@ -318,8 +318,8 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     
     # Retrieve brew prefix
     
-    # Linux prefix
-    if [ "$os_type" == "Linux/WSL" ]; then
+    # Linux/WSL prefix
+    if [ "$os_type" == "Linux" ]; then
         brew_prefix="/home/linuxbrew/.linuxbrew/"
     # Apple silicon macOS prefix
     elif [ -d "/opt/homebrew" ]; then
