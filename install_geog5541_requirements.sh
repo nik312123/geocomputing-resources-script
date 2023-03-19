@@ -235,22 +235,24 @@ if [ "$os_type" != "Darwin" ] && [ "$os_type" != "Linux" ]; then
     exit 1
 fi
 
-# Installs Xcode Command Line Tools if they are not already installed
-xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command Line '
-xcode_false_before+=$'Tools... 🛠️\nFollow the prompt that pops up!\n\n'
-xcode_false_after=$'After the installation of the Xcode Command Line Tools is complete, execute '
-xcode_false_after+=$'this script again.\n\n'
-run_command_conditional \
-    --check-command "xcode-select -p" \
-    --true-print-before $'Xcode Command Line Tools are installed! ✅\n\n' \
-    --true-print-after "" \
-    --true-echo-newline "false" \
-    --true-command "" \
-    --false-print-before "$xcode_false_before" \
-    --false-print-after "$xcode_false_after" \
-    --false-echo-newline "true" \
-    --false-command "xcode-select --install" \
-    --exit-if-false "true"
+# If the OS is macOS, then installs Xcode Command Line Tools if they are not already installed
+if [ "$os_type" == "Darwin" ]; then
+    xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command Line '
+    xcode_false_before+=$'Tools... 🛠️\nFollow the prompt that pops up!\n\n'
+    xcode_false_after=$'After the installation of the Xcode Command Line Tools is complete, execute '
+    xcode_false_after+=$'this script again.\n\n'
+    run_command_conditional \
+        --check-command "xcode-select -p" \
+        --true-print-before $'Xcode Command Line Tools are installed! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$xcode_false_before" \
+        --false-print-after "$xcode_false_after" \
+        --false-echo-newline "true" \
+        --false-command "xcode-select --install" \
+        --exit-if-false "true"
+fi
 
 # Installs homebrew if it does not already exist or updates it if it does
 homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew and its packages... (Please '
