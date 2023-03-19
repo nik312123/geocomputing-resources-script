@@ -284,7 +284,7 @@ if brew help >/dev/null 2>&1; then
 fi
 
 # Sets the shell login filenames based on the operating system
-if [ "$os_name" == "Darwin" ]; then
+if [ "$os_type" == "Darwin" ]; then
     bash_login_filename=".bash_profile"
     zsh_login_filename=".zprofile"
 else
