@@ -316,17 +316,15 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
         --false-command "touch ~/.zprofile" \
         --exit-if-false "false"
     
-    if $echo_on; then
-        printf "> if [ -d \"/opt/homebrew\" ]; then\n"
-        printf ">     brew_prefix=\"/opt/homebrew\"\n"
-        printf "> else\n"
-        printf ">    brew_prefix=\"/usr/local\"\n"
-        printf "> fi\n\n"
-    fi
-    
     # Retrieve brew prefix
-    if [ -d "/opt/homebrew" ]; then
+    
+    # Linux prefix
+    if [ "$os_type" == "Linux/WSL" ]; then
+        brew_prefix="/home/linuxbrew/.linuxbrew/"
+    # Apple silicon macOS prefix
+    elif [ -d "/opt/homebrew" ]; then
         brew_prefix="/opt/homebrew"
+    # Intel macOS prefix
     else
         brew_prefix="/usr/local"
     fi
