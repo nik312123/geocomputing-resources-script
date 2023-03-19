@@ -181,7 +181,7 @@ function run_homebrew_install {
     --false-print-before "$false_before" \
     --false-print-after "$false_after" \
     --false-echo-newline "true" \
-    --false-command "brew install $1" \
+    --false-command "HOMEBREW_NO_AUTO_UPDATE=1 brew install $1" \
     --exit-if-false "false"
 }
 
