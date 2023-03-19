@@ -177,7 +177,7 @@ function run_homebrew_install {
     --true-print-before "$true_before" \
     --true-print-after "$true_after" \
     --true-echo-newline "true" \
-    --true-command "brew upgrade $1" \
+    --true-command "HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade $1" \
     --false-print-before "$false_before" \
     --false-print-after "$false_after" \
     --false-echo-newline "true" \
