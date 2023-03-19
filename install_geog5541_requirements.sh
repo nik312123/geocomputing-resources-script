@@ -320,7 +320,7 @@ if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
         --true-echo-newline "false" \
         --true-command "" \
         --false-print-before $'~/'"$zsh_login_filename"$' could not be found. Creating it for you... 📝\n\n' \
-        --false-print-after $'~/'"zsh_login_filename"$' created!\n\n' \
+        --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
         --false-echo-newline "false" \
         --false-command "touch ~/$zsh_login_filename" \
         --exit-if-false "false"
