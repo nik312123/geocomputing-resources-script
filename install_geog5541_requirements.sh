@@ -27,6 +27,7 @@ function try_running_command {
 }
 
 # Raises an error if any parameter is provided more than once
+# Takes in the array, index, and name of the parameter
 function raise_error_if_index_set {
     declare -a arr=("${!1}")
     
@@ -185,6 +186,271 @@ function run_homebrew_install {
     --exit-if-false "false"
 }
 
+function install_requirements_macos {
+    # Installs Xcode Command Line Tools if they are not already installed
+    xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command '
+    xcode_false_before+=$'Line Tools... 🛠️\nFollow the prompt that pops up!\n\n'
+    xcode_false_after=$'After the installation of the Xcode Command Line Tools is complete, '
+    xcode_false_after+=$'execute this script again.\n\n'
+    run_command_conditional \
+        --check-command "xcode-select -p" \
+        --true-print-before $'Xcode Command Line Tools are installed! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$xcode_false_before" \
+        --false-print-after "$xcode_false_after" \
+        --false-echo-newline "true" \
+        --false-command "xcode-select --install" \
+        --exit-if-false "true"
+    
+    # Installs homebrew if it does not already exist or updates it if it does
+    homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew and its packages... '
+    homebrew_true_before+=$'(Please be patient. This may take some time.) 🍺\n\n'
+    homebrew_false_before=$'Homebrew was not found. ❌\n\nInstalling homebrew... (Please be '
+    homebrew_false_before+=$'patient. This may take some time.) 🍺\n\n'
+    homebrew_false_command="yes \"\" | INTERACTIVE=1 /bin/bash -c \"\$(curl -fsSL https://"
+    homebrew_false_command+="raw.githubusercontent.com/Homebrew/install/master/install.sh)\""
+    run_command_conditional \
+        --check-command "brew help" \
+        --true-print-before "$homebrew_true_before" \
+        --true-print-after $'Homebrew is updated! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "brew update && brew upgrade && brew cleanup --prune=all -s" \
+        --false-print-before "$homebrew_false_before" \
+        --false-print-after $'\nHomebrew is installed! ✅\n\n' \
+        --false-echo-newline "false" \
+        --false-command "$homebrew_false_command" \
+        --exit-if-false "false"
+    
+    # If Homebrew is installed, calculates the difference between the position of /usr/bin and
+    # Homebrew's bin
+    if brew help >/dev/null 2>&1; then
+        usr_bin="/usr/bin"
+        brew_bin="$(brew --prefix)/bin"
+        remainder_usr_bin="${PATH#*"$usr_bin"}"
+        remainder_brew_bin="${PATH#*"$brew_bin"}"
+        usr_bin_brew_bin_position_diff="$(( ${#remainder_brew_bin} - ${#remainder_usr_bin} ))"
+    fi
+    
+    # Sets the shell login filenames
+    bash_login_filename=".bash_profile"
+    zsh_login_filename=".zprofile"
+    
+    # Checks to see if Homebrew's binary directory is in your path (and at least has a higher
+    # presence than /usr/bin) and puts it at the beginning of your path if not
+    if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
+    || [ "$usr_bin_brew_bin_position_diff" -lt "0" ]; then
+        printf "\$(brew --prefix)/bin/ is not in your \$PATH. ❌\n\n"
+        printf "Adding \$(brew --prefix)/bin/ to your \$PATH... 📂\n\n"
+        
+        # If the bash login file does not exist, create it!
+        bash_login_false_before=$'~/.'"$bash_login_filename"$' could not be found. Creating it for '
+        bash_login_false_before+=$'you... 📝\n\n'
+        run_command_conditional \
+            --check-command "test -f ~/$bash_login_filename" \
+            --true-print-before "" \
+            --true-print-after "" \
+            --true-echo-newline "false" \
+            --true-command "" \
+            --false-print-before "$bash_login_false_before" \
+            --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
+            --false-echo-newline "false" \
+            --false-command "touch ~/$bash_login_filename" \
+            --exit-if-false "false"
+        
+        # If the zsh login file does not exist, create it!
+        zsh_login_false_before=$'~/'"$zsh_login_filename"$' could not be found. Creating it for '
+        zsh_login_false_before+=$'you... 📝\n\n'
+        run_command_conditional \
+            --check-command "test -f ~/$zsh_login_filename" \
+            --true-print-before "" \
+            --true-print-after "" \
+            --true-echo-newline "false" \
+            --true-command "" \
+            --false-print-before "$zsh_login_false_before" \
+            --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
+            --false-echo-newline "false" \
+            --false-command "touch ~/$zsh_login_filename" \
+            --exit-if-false "false"
+        
+        # Retrieve brew prefix
+        
+        # Apple silicon macOS prefix
+        if [ -d "/opt/homebrew" ]; then
+            brew_prefix="/opt/homebrew"
+        # Intel macOS prefix
+        else
+            brew_prefix="/usr/local"
+        fi
+        
+        if $echo_on; then
+            printf "> printf -v load_homebrew_string \"\\\\\\\neval \\\\\"\\\$(\\\\\"%%s/bin/brew"
+            printf "\\\\\" shellenv)\\\\\"\\\\\\\n\" \"\$brew_prefix\"\n\n"
+        fi
+        
+        printf -v load_homebrew_string "\\neval \"\$(\"%s/bin/brew\" shellenv)\"\\n" "$brew_prefix"
+        
+        # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash
+        # login file and spits an error if it fails
+        try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$bash_login_filename" \
+        "false"
+        
+        # Adds Homebrew's binary directory to the beginning of your $PATH variable in your zsh login
+        # file and spits an error if it fails
+        try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$zsh_login_filename" \
+        "false"
+        
+        printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
+        printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH.\n\n"
+        exit 1
+    fi
+    
+    printf "%s/bin/ is in your \$PATH! ✅\n\n" "$(brew --prefix)"
+    
+    # Installs a higher version of bash through homebrew if not already using homebrew's bash
+    run_homebrew_install "bash" "📺"
+    
+    # Checks if homebrew's bash is in the list of Terminal shells and adds it if not
+    bash_false_before=$'The updated bash is not in the list of Terminal shells. ❌\n\n'
+    bash_false_before+=$'Adding the updated bash to the list of Terminal shells... 📜\n\n'
+    bash_false_after=$'The updated bash is now in the list of Terminal shells! ✅\n\n'
+    run_command_conditional \
+        --check-command "grep -q \"\$(brew --prefix)/bin/bash\" /etc/shells" \
+        --true-print-before $'The updated bash is in the list of Terminal shells! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$bash_false_before" \
+        --false-print-after "$bash_false_after" \
+        --false-echo-newline "true" \
+        --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
+        --exit-if-false "false"
+    
+    # If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash
+    # is the default
+    bash_version_false_before=$'Your current bash is not up to date in your current shell. ❌\n\n'
+    bash_version_false_before+=$'Updating your current bash for your shell... 🔼\n\n'
+    bash_version_false_after=$'Your current bash is now up to date in your current shell! ✅\n\n'
+    bash_version_false_after+=$'Now, please restart your Terminal to use the updated bash.\n\n'
+    bash_version_false_command="if [ \"\$SHELL\" = \"/bin/bash\" ]; then chsh -s "
+    bash_version_false_command+="\"\$(brew --prefix)/bin/bash\"; fi"
+    run_command_conditional \
+        --check-command "[[ \${BASH_VERSION%%.*} -gt 4 ]]" \
+        --true-print-before $'Your bash version is up to date in your current shell! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$bash_version_false_before" \
+        --false-print-after "$bash_version_false_after" \
+        --false-echo-newline "false" \
+        --false-command "$bash_version_false_command" \
+        --exit-if-false "true"
+    
+    # Installs git through homebrew if not already installed
+    run_homebrew_install "git" "🐙"
+    
+    # Uninstalls Anaconda if it is installed
+    anaconda_true_command="conda install anaconda-clean --yes && anaconda-clean --yes && { rm -rf "
+    anaconda_true_command+="~/.anaconda_backup; rm -rf ~/anaconda3; rm -rf ~/opt/anaconda3; sudo "
+    anaconda_true_command+="rm -rf /Applications/Anaconda-Navigator.app; sudo rm -rf "
+    anaconda_true_command+="/usr/local/anaconda3; sudo rm -rf /opt/anaconda3; } && true"
+    run_command_conditional \
+        --check-command "which conda" \
+        --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
+        --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "$anaconda_true_command" \
+        --false-print-before $'Anaconda is not installed. ✅\n\n' \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+    
+    # Installs python3 through Homebrew if not already installed
+    run_homebrew_install "python3" "🐍"
+    
+    # Updates pip if not already up to date
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
+        --true-print-after $'pip is up to date! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "python3 -m pip install --upgrade pip" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+    
+    # Sets up pip and python aliases if not already set up
+    python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
+    python_alias_false_before+=$'python... 🔗\n\n'
+    python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> "
+    python_alias_false_command+="~/$bash_login_filename && printf 'alias python=\"python3\"\n' >> "
+    python_alias_false_command+="~/$bash_login_filename && printf '\nalias pip=\"python3 -m "
+    python_alias_false_command+="pip3\"\n' >> ~/$zsh_login_filename && printf 'alias "
+    python_alias_false_command+="python=\"python3\"\n' >> ~/$zsh_login_filename"
+    run_command_conditional \
+        --check-command "type pip && type python" \
+        --true-print-before $'pip and python are properly aliased. ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$python_alias_false_before" \
+        --false-print-after $'pip and python are properly aliased. ✅\n\n' \
+        --false-echo-newline "false" \
+        --false-command "$python_alias_false_command" \
+        --exit-if-false "false"
+    
+    # Installs gdal through Homebrew if not already installed
+    run_homebrew_install "gdal" "🌎"
+    
+    # Installs or updates the required Python packages
+    python_package_true_command="python3 -m pip install --upgrade -r "
+    python_package_true_command+="\"https://raw.githubusercontent.com/nik312123/"
+    python_package_true_command+="geocomputing-resources-script/master/requirements.txt\""
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
+        --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "$python_package_true_command" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+}
+
+function install_requirements_linux_wsl {
+    # Updates apt packages if they are not already up to date and installs some script dependencies
+    # if they are not already installed
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Ensuring apt packages are up to date... 📦\n\n' \
+        --true-print-after $'Apt packages are up to date! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo apt update -y && sudo apt upgrade -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+        
+        run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Installing script dependencies... 🧱\n\n' \
+        --true-print-after $'Script dependencies have been installed! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo apt install build-essential bash procps curl file git -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+}
+
 # Prevents the user from executing this script as root as homebrew does not play well with root
 if [ "$(whoami)" == "root" ]; then
     printf "This script cannot be run as root. "
@@ -229,275 +495,15 @@ fi
 # Gets the operating system type
 os_type=$(uname -s)
 
-# Checks if the operating system is supported
-if [ "$os_type" != "Darwin" ] && [ "$os_type" != "Linux" ]; then
+# Checks if the operating system is supported and runs the appropriate installation function
+if [ "$os_type" == "Darwin" ]; then
+    install_requirements_macos
+elif [ "$os_type" == "Linux" ]; then
+    install_requirements_linux_wsl
+else
     printf "This script only supports macOS and Linux/WSL.\n\n"
     exit 1
 fi
-
-# If the OS is macOS, then installs Xcode Command Line Tools if they are not already installed
-if [ "$os_type" == "Darwin" ]; then
-    xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command Line '
-    xcode_false_before+=$'Tools... 🛠️\nFollow the prompt that pops up!\n\n'
-    xcode_false_after=$'After the installation of the Xcode Command Line Tools is complete, execute '
-    xcode_false_after+=$'this script again.\n\n'
-    run_command_conditional \
-        --check-command "xcode-select -p" \
-        --true-print-before $'Xcode Command Line Tools are installed! ✅\n\n' \
-        --true-print-after "" \
-        --true-echo-newline "false" \
-        --true-command "" \
-        --false-print-before "$xcode_false_before" \
-        --false-print-after "$xcode_false_after" \
-        --false-echo-newline "true" \
-        --false-command "xcode-select --install" \
-        --exit-if-false "true"
-# If the OS is Linux/WSL, then updates apt packages if they are not already up to date and
-# installs linuxbrew dependencies if they are not already installed
-else
-    run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Ensuring apt packages are up to date... 📦\n\n' \
-        --true-print-after $'Apt packages are up to date! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "sudo apt update -y && sudo apt upgrade -y" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
-        
-        run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Installing linuxbrew dependencies... 🧱\n\n' \
-        --true-print-after $'Linuxbrew dependencies have been installed! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "sudo apt install build-essential procps curl file git -y" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
-fi
-
-# Installs homebrew if it does not already exist or updates it if it does
-homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew and its packages... (Please '
-homebrew_true_before+=$'be patient. This may take some time.) 🍺\n\n'
-homebrew_false_before=$'Homebrew was not found. ❌\n\nInstalling homebrew... (Please be patient. '
-homebrew_false_before+=$'This may take some time.) 🍺\n\n'
-homebrew_false_command="yes \"\" | INTERACTIVE=1 /bin/bash -c \"\$(curl -fsSL "
-homebrew_false_command+="https://raw.githubusercontent.com/Homebrew/install/master/install.sh)\""
-run_command_conditional \
-    --check-command "brew help" \
-    --true-print-before "$homebrew_true_before" \
-    --true-print-after $'Homebrew is updated! ✅\n\n' \
-    --true-echo-newline "true" \
-    --true-command "brew update && brew upgrade && brew cleanup --prune=all -s" \
-    --false-print-before "$homebrew_false_before" \
-    --false-print-after $'\nHomebrew is installed! ✅\n\n' \
-    --false-echo-newline "false" \
-    --false-command "$homebrew_false_command" \
-    --exit-if-false "false"
-
-# If Homebrew is installed, calculates the difference between the position of /usr/bin and
-# Homebrew's bin
-if brew help >/dev/null 2>&1; then
-    usr_bin="/usr/bin"
-    brew_bin="$(brew --prefix)/bin"
-    remainder_usr_bin="${PATH#*"$usr_bin"}"
-    remainder_brew_bin="${PATH#*"$brew_bin"}"
-    usr_bin_brew_bin_position_diff="$(( ${#remainder_brew_bin} - ${#remainder_usr_bin} ))"
-fi
-
-# Sets the shell login filenames based on the operating system
-if [ "$os_type" == "Darwin" ]; then
-    bash_login_filename=".bash_profile"
-    zsh_login_filename=".zprofile"
-else
-    bash_login_filename=".bashrc"
-    zsh_login_filename=".zshrc"
-fi
-
-# Checks to see if Homebrew's binary directory is in your path (and at least has a higher presence
-# than /usr/bin) and puts it at the beginning of your path if not
-if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
-|| [ "$usr_bin_brew_bin_position_diff" -lt "0" ]; then
-    printf "\$(brew --prefix)/bin/ is not in your \$PATH. ❌\n\n"
-    printf "Adding \$(brew --prefix)/bin/ to your \$PATH... 📂\n\n"
-    
-    # If the bash login file does not exist, create it!
-    run_command_conditional \
-        --check-command "test -f ~/$bash_login_filename" \
-        --true-print-before "" \
-        --true-print-after "" \
-        --true-echo-newline "false" \
-        --true-command "" \
-        --false-print-before $'~/.'"$bash_login_filename"$' could not be found. Creating it for you... 📝\n\n' \
-        --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
-        --false-echo-newline "false" \
-        --false-command "touch ~/$bash_login_filename" \
-        --exit-if-false "false"
-    
-    # If the zsh login file does not exist, create it!
-    run_command_conditional \
-        --check-command "test -f ~/$zsh_login_filename" \
-        --true-print-before "" \
-        --true-print-after "" \
-        --true-echo-newline "false" \
-        --true-command "" \
-        --false-print-before $'~/'"$zsh_login_filename"$' could not be found. Creating it for you... 📝\n\n' \
-        --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
-        --false-echo-newline "false" \
-        --false-command "touch ~/$zsh_login_filename" \
-        --exit-if-false "false"
-    
-    # Retrieve brew prefix
-    
-    # Linux/WSL prefix
-    if [ "$os_type" == "Linux" ]; then
-        brew_prefix="/home/linuxbrew/.linuxbrew/"
-    # Apple silicon macOS prefix
-    elif [ -d "/opt/homebrew" ]; then
-        brew_prefix="/opt/homebrew"
-    # Intel macOS prefix
-    else
-        brew_prefix="/usr/local"
-    fi
-    
-    if $echo_on; then
-        printf "> printf -v load_homebrew_string \"\\\\\\\neval \\\\\"\\\$(\\\\\"%%s/bin/brew\\\\\""
-        printf " shellenv)\\\\\"\\\\\\\n\" \"\$brew_prefix\"\n\n"
-    fi
-    
-    printf -v load_homebrew_string "\\neval \"\$(\"%s/bin/brew\" shellenv)\"\\n" "$brew_prefix"
-    
-    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash login
-    # file and spits an error if it fails
-    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$bash_login_filename" "false"
-    
-    # Adds Homebrew's binary directory to the beginning of your $PATH variable in your zsh login
-    # file and spits an error if it fails
-    try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$zsh_login_filename" "false"
-    
-    printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
-    printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH.\n\n"
-    exit 1
-fi
-
-printf "%s/bin/ is in your \$PATH! ✅\n\n" "$(brew --prefix)"
-
-# Installs a higher version of bash through homebrew if not already using homebrew's bash
-run_homebrew_install "bash" "📺"
-
-# Checks if homebrew's bash is in the list of available Terminal shells and adds it if not
-bash_false_before=$'The updated bash is not in the list of available Terminal shells. ❌\n\n'
-bash_false_before+=$'Adding the updated bash to the list of Terminal shells... 📜\n\n'
-bash_false_after=$'The updated bash is now in the list of available Terminal shells! ✅\n\n'
-run_command_conditional \
-    --check-command "grep -q \"\$(brew --prefix)/bin/bash\" /etc/shells" \
-    --true-print-before $'The updated bash is in the list of available Terminal shells! ✅\n\n' \
-    --true-print-after "" \
-    --true-echo-newline "false" \
-    --true-command "" \
-    --false-print-before "$bash_false_before" \
-    --false-print-after "$bash_false_after" \
-    --false-echo-newline "true" \
-    --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
-    --exit-if-false "false"
-
-# If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash is
-# the default
-bash_version_false_before=$'Your current bash is not up to date in your current shell. ❌\n\n'
-bash_version_false_before+=$'Updating your current bash for your shell... 🔼\n\n'
-bash_version_false_after=$'Your current bash is now up to date in your current shell! ✅\n\nNow, '
-bash_version_false_after+=$'please restart your Terminal to use the updated bash.\n\n'
-bash_version_false_command="if [ \"\$SHELL\" = \"/bin/bash\" ]; then chsh -s \"\$(brew --prefix)"
-bash_version_false_command+="/bin/bash\"; fi"
-run_command_conditional \
-    --check-command "[[ \${BASH_VERSION%%.*} -gt 4 ]]" \
-    --true-print-before $'Your bash version is up to date in your current shell! ✅\n\n' \
-    --true-print-after "" \
-    --true-echo-newline "false" \
-    --true-command "" \
-    --false-print-before "$bash_version_false_before" \
-    --false-print-after "$bash_version_false_after" \
-    --false-echo-newline "false" \
-    --false-command "$bash_version_false_command" \
-    --exit-if-false "true"
-
-# Installs git through homebrew if not already installed
-run_homebrew_install "git" "🐙"
-
-# Uninstalls Anaconda if it is installed
-anaconda_true_command="conda install anaconda-clean --yes && anaconda-clean --yes && { rm -rf "
-anaconda_true_command+="~/.anaconda_backup; rm -rf ~/anaconda3; rm -rf ~/opt/anaconda3; sudo rm "
-anaconda_true_command+="-rf /Applications/Anaconda-Navigator.app; sudo rm -rf "
-anaconda_true_command+="/usr/local/anaconda3; sudo rm -rf /opt/anaconda3; } && true"
-run_command_conditional \
-    --check-command "which conda" \
-    --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
-    --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
-    --true-echo-newline "true" \
-    --true-command "$anaconda_true_command" \
-    --false-print-before $'Anaconda is not installed. ✅\n\n' \
-    --false-print-after "" \
-    --false-echo-newline "false" \
-    --false-command "" \
-    --exit-if-false "false"
-
-# Installs python3 through Homebrew if not already installed
-run_homebrew_install "python3" "🐍"
-
-# Updates pip if not already up to date
-run_command_conditional \
-    --check-command "true" \
-    --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
-    --true-print-after $'pip is up to date! ✅\n\n' \
-    --true-echo-newline "true" \
-    --true-command "python3 -m pip install --upgrade pip" \
-    --false-print-before "" \
-    --false-print-after "" \
-    --false-echo-newline "false" \
-    --false-command "" \
-    --exit-if-false "false"
-
-# Sets up pip and python aliases if not already set up
-python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
-python_alias_false_before+=$'python... 🔗\n\n'
-python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/$bash_login_filename "
-python_alias_false_command+="&& printf 'alias python=\"python3\"\n' >> ~/$bash_login_filename "
-python_alias_false_command+="&& printf '\nalias pip=\"python3 -m pip3\"\n' >> ~/$zsh_login_filename"
-python_alias_false_command+=" && printf 'alias python=\"python3\"\n' >> ~/$zsh_login_filename"
-run_command_conditional \
-    --check-command "type pip && type python" \
-    --true-print-before $'pip and python are properly aliased. ✅\n\n' \
-    --true-print-after "" \
-    --true-echo-newline "false" \
-    --true-command "" \
-    --false-print-before "$python_alias_false_before" \
-    --false-print-after $'pip and python are properly aliased. ✅\n\n' \
-    --false-echo-newline "false" \
-    --false-command "$python_alias_false_command" \
-    --exit-if-false "false"
-
-# Installs gdal through Homebrew if not already installed
-run_homebrew_install "gdal" "🌎"
-
-# Installs or updates the required Python packages
-python_package_true_command="python3 -m pip install --upgrade -r "
-python_package_true_command+="\"https://raw.githubusercontent.com/nik312123/"
-python_package_true_command+="geocomputing-resources-script/master/requirements.txt\""
-run_command_conditional \
-    --check-command "true" \
-    --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
-    --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
-    --true-echo-newline "true" \
-    --true-command "$python_package_true_command" \
-    --false-print-before "" \
-    --false-print-after "" \
-    --false-echo-newline "false" \
-    --false-command "" \
-    --exit-if-false "false"
 
 printf "Congratulations! Your computer should be completely set up! 💻\n\n"
 printf "Please quit and reopen the Terminal to finalize the process.\n\n"
