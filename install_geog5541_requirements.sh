@@ -223,6 +223,11 @@ function install_requirements_macos {
         --false-command "$homebrew_false_command" \
         --exit-if-false "false"
     
+    # Creates the bash and zsh login files if they do not exist
+    bash_login_filename=".bash_profile"
+    zsh_login_filename=".zprofile"
+    create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
+    
     # If Homebrew is installed, calculates the difference between the position of /usr/bin and
     # Homebrew's bin
     if brew help >/dev/null 2>&1; then
@@ -233,46 +238,12 @@ function install_requirements_macos {
         usr_bin_brew_bin_position_diff="$(( ${#remainder_brew_bin} - ${#remainder_usr_bin} ))"
     fi
     
-    # Sets the shell login filenames
-    bash_login_filename=".bash_profile"
-    zsh_login_filename=".zprofile"
-    
     # Checks to see if Homebrew's binary directory is in your path (and at least has a higher
     # presence than /usr/bin) and puts it at the beginning of your path if not
     if ! brew help >/dev/null 2>&1 || [[ "$PATH" != *"$(brew --prefix)/bin"* ]] \
     || [ "$usr_bin_brew_bin_position_diff" -lt "0" ]; then
         printf "\$(brew --prefix)/bin/ is not in your \$PATH. ❌\n\n"
         printf "Adding \$(brew --prefix)/bin/ to your \$PATH... 📂\n\n"
-        
-        # If the bash login file does not exist, create it!
-        bash_login_false_before=$'~/.'"$bash_login_filename"$' could not be found. Creating it for '
-        bash_login_false_before+=$'you... 📝\n\n'
-        run_command_conditional \
-            --check-command "test -f ~/$bash_login_filename" \
-            --true-print-before "" \
-            --true-print-after "" \
-            --true-echo-newline "false" \
-            --true-command "" \
-            --false-print-before "$bash_login_false_before" \
-            --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
-            --false-echo-newline "false" \
-            --false-command "touch ~/$bash_login_filename" \
-            --exit-if-false "false"
-        
-        # If the zsh login file does not exist, create it!
-        zsh_login_false_before=$'~/'"$zsh_login_filename"$' could not be found. Creating it for '
-        zsh_login_false_before+=$'you... 📝\n\n'
-        run_command_conditional \
-            --check-command "test -f ~/$zsh_login_filename" \
-            --true-print-before "" \
-            --true-print-after "" \
-            --true-echo-newline "false" \
-            --true-command "" \
-            --false-print-before "$zsh_login_false_before" \
-            --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
-            --false-echo-newline "false" \
-            --false-command "touch ~/$zsh_login_filename" \
-            --exit-if-false "false"
         
         # Retrieve brew prefix
         
