@@ -6,7 +6,7 @@
 # Prints an error message about running a command and exits the script
 function print_error_and_exit {
     printf "\nAn error occurred in running the command: %s\n" "$1"
-    printf "Try running the script again, and if the problem still occurs, "
+    printf "Try running the script again with the -v flag, and if the problem still occurs, "
     printf "contact tinyurl.com/nikunj-cs\n\n"
     exit 1
 }
