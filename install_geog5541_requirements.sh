@@ -186,6 +186,144 @@ function run_homebrew_install {
     --exit-if-false "false"
 }
 
+# Creates the bash and zsh login files if they do not exist
+function create_bash_login_files {
+    bash_login_filename="$1"
+    zsh_login_filename="$2"
+    
+    # If the bash login file does not exist, create it!
+        bash_login_false_before=$'~/.'"$bash_login_filename"$' could not be found. Creating it for '
+        bash_login_false_before+=$'you... 📝\n\n'
+        run_command_conditional \
+            --check-command "test -f ~/$bash_login_filename" \
+            --true-print-before "" \
+            --true-print-after "" \
+            --true-echo-newline "false" \
+            --true-command "" \
+            --false-print-before "$bash_login_false_before" \
+            --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
+            --false-echo-newline "false" \
+            --false-command "touch ~/$bash_login_filename" \
+            --exit-if-false "false"
+        
+        # If the zsh login file does not exist, create it!
+        zsh_login_false_before=$'~/'"$zsh_login_filename"$' could not be found. Creating it for '
+        zsh_login_false_before+=$'you... 📝\n\n'
+        run_command_conditional \
+            --check-command "test -f ~/$zsh_login_filename" \
+            --true-print-before "" \
+            --true-print-after "" \
+            --true-echo-newline "false" \
+            --true-command "" \
+            --false-print-before "$zsh_login_false_before" \
+            --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
+            --false-echo-newline "false" \
+            --false-command "touch ~/$zsh_login_filename" \
+            --exit-if-false "false"
+}
+
+# Uninstalls Anaconda if it is installed
+function uninstall_anaconda {
+    anaconda_paths=(
+        "$HOME/.conda"
+        "$HOME/.condarc"
+        "$HOME/.continuum"
+        "$HOME/.anaconda_backup"
+        "$HOME/anaconda*"
+        "$HOME/.spyder*"
+        "$HOME/opt/anaconda*"
+        "/Applications/Anaconda-Navigator.app"
+        "/usr/local/anaconda*"
+        "/opt/anaconda*"
+        "/usr/local/bin/anaconda*"
+        "/usr/local/bin/conda*"
+        "/usr/bin/anaconda*"
+        "/usr/bin/conda*"
+        "$HOME/bin/anaconda*"
+        "$HOME/bin/conda*"
+        "/usr/share/applications/anaconda-navigator.desktop"
+        "/usr/share/applications/anaconda.desktop"
+        "/usr/share/icons/hicolor/*/apps/anaconda.png"
+    )
+    
+    anaconda_true_command="conda install anaconda-clean --yes && anaconda-clean --yes && { "
+    for path in "${anaconda_paths[@]}"; do
+        anaconda_true_command+="sudo rm -rf $path; "
+    done
+    anaconda_true_command+="}; true"
+    run_command_conditional \
+        --check-command "which conda || command -v anaconda" \
+        --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
+        --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "$anaconda_true_command" \
+        --false-print-before $'Anaconda is not installed. ✅\n\n' \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+}
+
+# Upgrades pip
+function upgrade_pip {
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
+        --true-print-after $'pip is up to date! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "python3 -m pip install --upgrade pip" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+}
+
+# Adds aliases for pip and python if they are not aliased
+function alias_python3_and_pip {
+    bash_login_filename="$1"
+    zsh_login_filename="$2"
+    
+    python_check="type pip && type python && [[ \"\$(python --version)\" == *\"Python 3\"* ]]"
+    python_check+="&& [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
+    python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
+    python_alias_false_before+=$'python... 🔗\n\n'
+    python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> "
+    python_alias_false_command+="~/$bash_login_filename && printf 'alias python=\"python3\"\n' >> "
+    python_alias_false_command+="~/$bash_login_filename && printf '\nalias pip=\"python3 -m "
+    python_alias_false_command+="pip3\"\n' >> ~/$zsh_login_filename && printf 'alias "
+    python_alias_false_command+="python=\"python3\"\n' >> ~/$zsh_login_filename"
+    run_command_conditional \
+        --check-command "$python_check" \
+        --true-print-before $'pip and python are properly aliased. ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$python_alias_false_before" \
+        --false-print-after $'pip and python are properly aliased. ✅\n\n' \
+        --false-echo-newline "false" \
+        --false-command "$python_alias_false_command" \
+        --exit-if-false "false"
+}
+
+# Installs or updates the required Python packages
+function install_required_python_packages {
+    python_package_true_command="python3 -m pip install --upgrade -r "
+    python_package_true_command+="\"https://raw.githubusercontent.com/nik312123/"
+    python_package_true_command+="geocomputing-resources-script/master/requirements.txt\""
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
+        --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "$python_package_true_command" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+}
+
 function install_requirements_macos {
     # Installs Xcode Command Line Tools if they are not already installed
     xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command '
@@ -322,76 +460,22 @@ function install_requirements_macos {
     run_homebrew_install "git" "🐙"
     
     # Uninstalls Anaconda if it is installed
-    anaconda_true_command="conda install anaconda-clean --yes && anaconda-clean --yes && { rm -rf "
-    anaconda_true_command+="~/.anaconda_backup; rm -rf ~/anaconda3; rm -rf ~/opt/anaconda3; sudo "
-    anaconda_true_command+="rm -rf /Applications/Anaconda-Navigator.app; sudo rm -rf "
-    anaconda_true_command+="/usr/local/anaconda3; sudo rm -rf /opt/anaconda3; } && true"
-    run_command_conditional \
-        --check-command "which conda" \
-        --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
-        --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "$anaconda_true_command" \
-        --false-print-before $'Anaconda is not installed. ✅\n\n' \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+    uninstall_anaconda
     
     # Installs python3 through Homebrew if not already installed
     run_homebrew_install "python3" "🐍"
     
-    # Updates pip if not already up to date
-    run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
-        --true-print-after $'pip is up to date! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "python3 -m pip install --upgrade pip" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+    # Upgrades pip if not already up to date
+    upgrade_pip
     
     # Sets up pip and python aliases if not already set up
-    python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
-    python_alias_false_before+=$'python... 🔗\n\n'
-    python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> "
-    python_alias_false_command+="~/$bash_login_filename && printf 'alias python=\"python3\"\n' >> "
-    python_alias_false_command+="~/$bash_login_filename && printf '\nalias pip=\"python3 -m "
-    python_alias_false_command+="pip3\"\n' >> ~/$zsh_login_filename && printf 'alias "
-    python_alias_false_command+="python=\"python3\"\n' >> ~/$zsh_login_filename"
-    run_command_conditional \
-        --check-command "type pip && type python" \
-        --true-print-before $'pip and python are properly aliased. ✅\n\n' \
-        --true-print-after "" \
-        --true-echo-newline "false" \
-        --true-command "" \
-        --false-print-before "$python_alias_false_before" \
-        --false-print-after $'pip and python are properly aliased. ✅\n\n' \
-        --false-echo-newline "false" \
-        --false-command "$python_alias_false_command" \
-        --exit-if-false "false"
+    alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
     
     # Installs gdal through Homebrew if not already installed
     run_homebrew_install "gdal" "🌎"
     
     # Installs or updates the required Python packages
-    python_package_true_command="python3 -m pip install --upgrade -r "
-    python_package_true_command+="\"https://raw.githubusercontent.com/nik312123/"
-    python_package_true_command+="geocomputing-resources-script/master/requirements.txt\""
-    run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
-        --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "$python_package_true_command" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+    install_required_python_packages
 }
 
 function install_requirements_linux_wsl {
@@ -408,8 +492,8 @@ function install_requirements_linux_wsl {
         --false-echo-newline "false" \
         --false-command "" \
         --exit-if-false "false"
-        
-        run_command_conditional \
+    
+    run_command_conditional \
         --check-command "true" \
         --true-print-before $'Installing script dependencies... 🧱\n\n' \
         --true-print-after $'Script dependencies have been installed! ✅\n\n' \
@@ -420,6 +504,41 @@ function install_requirements_linux_wsl {
         --false-echo-newline "false" \
         --false-command "" \
         --exit-if-false "false"
+    
+    # Creates the bash and zsh login files if they do not exist
+    bash_login_filename=".bashrc"
+    zsh_login_filename=".zshrc"
+    create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
+    
+    # Uninstalls Anaconda if it is installed
+    uninstall_anaconda
+    
+    # Install python3 and pip3 through apt if not already installed
+    python3_false_before=$'python3 and pip3 are not installed. ❌\n\n'
+    python3_false_before+=$'Installing Python3 and pip3... 🐍\n\n'
+    run_command_conditional \
+        --check-command "which python3 && which pip3" \
+        --true-print-before $'python3 and pip3 are already installed. ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$python3_false_before" \
+        --false-print-after $'python3 and pip3 have been installed! ✅\n\n' \
+        --false-echo-newline "true" \
+        --false-command "sudo apt install python3 python3-pip -y" \
+        --exit-if-false "false"
+    
+    # Upgrades pip if not already up to date
+    upgrade_pip
+    
+    # Sets up pip and python aliases if not already set up
+    alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
+    
+    # Installs gdal through apt if not already installed
+    # TODO: Add gdal installation for WSL/Linux
+    
+    # Installs or updates the required Python packages
+    install_required_python_packages
 }
 
 # Prevents the user from executing this script as root as homebrew does not play well with root
