@@ -288,11 +288,11 @@ function alias_python3_and_pip {
     python_check+=" && [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
-    python_alias_false_command="printf \"\nalias python=\"python3\"\n\" >> ~/$bash_login_filename "
-    python_alias_false_command+="&& printf \"alias pip=\"python3 -m pip3\"\n\" >> "
-    python_alias_false_command+="~/$bash_login_filename && printf \"\nalias python=\"python3\"\n\" "
-    python_alias_false_command+=">> ~/$zsh_login_filename && printf \"alias pip=\"python3 -m "
-    python_alias_false_command+="pip\"\n\" >> ~/$zsh_login_filename"
+    python_alias_false_command="printf '\nalias python=\"python3\"\n' >> ~/$bash_login_filename "
+    python_alias_false_command+="&& printf 'alias pip=\"python3 -m pip3\"\n' >> "
+    python_alias_false_command+="~/$bash_login_filename && printf '\nalias python=\"python3\"\n' "
+    python_alias_false_command+=">> ~/$zsh_login_filename && printf 'alias pip=\"python3 -m "
+    python_alias_false_command+="pip\"\n' >> ~/$zsh_login_filename"
     run_command_conditional \
         --check-command "$python_check" \
         --true-print-before $'pip and python are properly aliased. ✅\n\n' \
