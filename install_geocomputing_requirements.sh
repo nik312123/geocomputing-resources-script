@@ -290,9 +290,8 @@ function alias_python3_and_pip {
         user_profile="$bash_login_filename"
     fi
     
-    python_check="source \"${HOME}/${user_profile}\"; type pip && type python "
-    python_check+="&& [[ \"\$(python --version)\" == *\"Python 3\"* ]] "
-    python_check+="&& [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
+    python_check="grep -q 'alias python=\"python3\"' \"${HOME}/${user_profile}\" && "
+    python_check+="grep -q 'alias pip=\"python3 -m pip\"' \"${HOME}/${user_profile}\""
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
     python_alias_false_command="printf '\nalias python=\"python3\"\n' >> "
@@ -611,9 +610,6 @@ else
     fi
     echo_on=false
 fi
-
-# Enables aliases in the script
-shopt -s expand_aliases
 
 # Gets the operating system type
 os_type=$(uname -s)
