@@ -285,7 +285,7 @@ function alias_python3_and_pip {
     zsh_login_filename="$2"
     
     python_check="type pip && type python && [[ \"\$(python --version)\" == *\"Python 3\"* ]]"
-    python_check+="&& [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
+    python_check+=" && [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
     python_alias_false_command="printf '\nalias pip=\"python3 -m pip3\"\n' >> "
