@@ -192,33 +192,33 @@ function create_bash_login_files {
     zsh_login_filename="$2"
     
     # If the bash login file does not exist, create it!
-        bash_login_false_before=$'~/.'"$bash_login_filename"$' could not be found. Creating it for '
+        bash_login_false_before="${HOME}/${bash_login_filename}"$' could not be found. Creating it for '
         bash_login_false_before+=$'you... 📝\n\n'
         run_command_conditional \
-            --check-command "test -f ~/$bash_login_filename" \
+            --check-command "test -f \"$HOME/$bash_login_filename\"" \
             --true-print-before "" \
             --true-print-after "" \
             --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$bash_login_false_before" \
-            --false-print-after $'~/'"$bash_login_filename"$' created!\n\n' \
+            --false-print-after "${HOME}/${bash_login_filename}"$' created!\n\n' \
             --false-echo-newline "false" \
-            --false-command "touch ~/$bash_login_filename" \
+            --false-command "touch \"${HOME}/${bash_login_filename}\"" \
             --exit-if-false "false"
         
         # If the zsh login file does not exist, create it!
-        zsh_login_false_before=$'~/'"$zsh_login_filename"$' could not be found. Creating it for '
+        zsh_login_false_before="${HOME}/${zsh_login_filename}"$' could not be found. Creating it for '
         zsh_login_false_before+=$'you... 📝\n\n'
         run_command_conditional \
-            --check-command "test -f ~/$zsh_login_filename" \
+            --check-command "test -f \"${HOME}/${zsh_login_filename}\"" \
             --true-print-before "" \
             --true-print-after "" \
             --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$zsh_login_false_before" \
-            --false-print-after $'~/'"$zsh_login_filename"$' created!\n\n' \
+            --false-print-after "${HOME}/${zsh_login_filename}"$' created!\n\n' \
             --false-echo-newline "false" \
-            --false-command "touch ~/$zsh_login_filename" \
+            --false-command "touch \"${HOME}/${zsh_login_filename}\"" \
             --exit-if-false "false"
 }
 
@@ -290,16 +290,16 @@ function alias_python3_and_pip {
         user_profile="$bash_login_filename"
     fi
     
-    python_check="source \"~/$user_profile\" && type pip && type python "
+    python_check="source \"${HOME}/${user_profile}\"; type pip && type python "
     python_check+="&& [[ \"\$(python --version)\" == *\"Python 3\"* ]] "
     python_check+="&& [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
-    python_alias_false_command="printf '\nalias python=\"python3\"\n' >> ~/$bash_login_filename "
-    python_alias_false_command+="&& printf 'alias pip=\"python3 -m pip\"\n' >> "
-    python_alias_false_command+="~/$bash_login_filename && printf '\nalias python=\"python3\"\n' "
-    python_alias_false_command+=">> ~/$zsh_login_filename && printf 'alias pip=\"python3 -m "
-    python_alias_false_command+="pip\"\n' >> ~/$zsh_login_filename"
+    python_alias_false_command="printf '\nalias python=\"python3\"\n' >> "
+    python_alias_false_command+="${HOME}/${bash_login_filename} && printf 'alias pip=\"python3 -m "
+    python_alias_false_command+="pip\"\n' >> ${HOME}/${bash_login_filename} && printf '\nalias "
+    python_alias_false_command+="python=\"python3\"\n' >> ${HOME}/${zsh_login_filename} && printf "
+    python_alias_false_command+="'alias pip=\"python3 -m pip\"\n' >> ${HOME}/${zsh_login_filename}"
     run_command_conditional \
         --check-command "$python_check" \
         --true-print-before $'pip and python are properly aliased. ✅\n\n' \
@@ -409,13 +409,13 @@ function install_requirements_macos {
         
         # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash
         # login file and spits an error if it fails
-        try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$bash_login_filename" \
-        "false"
+        load_brew_bash="printf \"%s\" \"\$load_homebrew_string\" >> ${HOME}/${bash_login_filename}"
+        try_running_command "$load_brew_bash" "false"
         
         # Adds Homebrew's binary directory to the beginning of your $PATH variable in your zsh login
         # file and spits an error if it fails
-        try_running_command "printf \"%s\" \"\$load_homebrew_string\" >> ~/$zsh_login_filename" \
-        "false"
+        load_brew_zsh="printf \"%s\" \"\$load_homebrew_string\" >> ${HOME}/${zsh_login_filename}"
+        try_running_command "$load_brew_zsh" "false"
         
         printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
         printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH.\n\n"
