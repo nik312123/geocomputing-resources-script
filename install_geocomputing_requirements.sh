@@ -541,8 +541,31 @@ function install_requirements_linux_wsl {
     # Sets up pip and python aliases if not already set up
     alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
     
+    # Adds the apt repository for gdal if not already added
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Adding the apt repository for gdal... 📦\n\n' \
+        --true-print-after $'The apt repository for gdal has been added! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
+    
     # Installs gdal through apt if not already installed
-    # TODO: Add gdal installation for WSL/Linux
+    run_command_conditional \
+        --check-command "true" \
+        --true-print-before $'Installing gdal... 🌎\n\n' \
+        --true-print-after $'gdal has been installed! ✅\n\n' \
+        --true-echo-newline "true" \
+        --true-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
+        --false-print-before "" \
+        --false-print-after "" \
+        --false-echo-newline "false" \
+        --false-command "" \
+        --exit-if-false "false"
     
     # Installs or updates the required Python packages
     install_required_python_packages
