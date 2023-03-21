@@ -325,6 +325,17 @@ function install_required_python_packages {
 }
 
 function install_requirements_macos {
+    # The names of the bash and zsh login files
+    bash_login_filename=".bash_profile"
+    zsh_login_filename=".zprofile"
+    
+    # Sources the bash or zsh login file based on the user's shell
+    if [[ "$SHELL" == *"/zsh" ]]; then
+        source "$HOME/$zsh_login_filename" >/dev/null 2>&1
+    else
+        source "$HOME/$bash_login_filename" >/dev/null 2>&1
+    fi
+    
     # Installs Xcode Command Line Tools if they are not already installed
     xcode_false_before=$'Xcode Command Line Tools were not found. ❌\n\nInstalling Xcode Command '
     xcode_false_before+=$'Line Tools... 🛠️\nFollow the prompt that pops up!\n\n'
@@ -362,8 +373,6 @@ function install_requirements_macos {
         --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
-    bash_login_filename=".bash_profile"
-    zsh_login_filename=".zprofile"
     create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
     
     # If Homebrew is installed, calculates the difference between the position of /usr/bin and
@@ -479,6 +488,17 @@ function install_requirements_macos {
 }
 
 function install_requirements_linux_wsl {
+    # The names of the bash and zsh login files
+    bash_login_filename=".bashrc"
+    zsh_login_filename=".zshrc"
+    
+    # Sources the bash or zsh login file based on the user's shell
+    if [[ "$SHELL" == *"/zsh" ]]; then
+        source "$HOME/$zsh_login_filename" >/dev/null 2>&1
+    else
+        source "$HOME/$bash_login_filename" >/dev/null 2>&1
+    fi
+    
     # Updates apt packages if they are not already up to date and installs some script dependencies
     # if they are not already installed
     run_command_conditional \
@@ -506,8 +526,6 @@ function install_requirements_linux_wsl {
         --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
-    bash_login_filename=".bashrc"
-    zsh_login_filename=".zshrc"
     create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
     
     # Uninstalls Anaconda if it is installed
