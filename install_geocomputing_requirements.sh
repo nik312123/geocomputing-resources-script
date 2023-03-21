@@ -589,6 +589,9 @@ else
     echo_on=false
 fi
 
+# Enables aliases in the script
+shopt -s expand_aliases
+
 # Gets the operating system type
 os_type=$(uname -s)
 
