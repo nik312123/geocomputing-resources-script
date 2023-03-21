@@ -284,8 +284,15 @@ function alias_python3_and_pip {
     bash_login_filename="$1"
     zsh_login_filename="$2"
     
-    python_check="type pip && type python && [[ \"\$(python --version)\" == *\"Python 3\"* ]]"
-    python_check+=" && [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
+    if [[ "$SHELL" == *"/zsh" ]]; then
+        user_profile="$zsh_login_filename"
+    else
+        user_profile="$bash_login_filename"
+    fi
+    
+    python_check="source \"~/$user_profile\" && type pip && type python "
+    python_check+="&& [[ \"\$(python --version)\" == *\"Python 3\"* ]] "
+    python_check+="&& [[ \"\$(pip --version)\" == *\"python 3\"* ]]"
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
     python_alias_false_command="printf '\nalias python=\"python3\"\n' >> ~/$bash_login_filename "
