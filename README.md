@@ -5,7 +5,7 @@ The goal of this script is to install all software needed for geocomputing on a 
 To run the aforementioned installation script, you may run the following:
 
 ```bash
-bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geogcomputing_requirements.sh" )
+bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geocomputing_requirements.sh" )
 ```
 
 To run the script in verbose mode (prints commands being run and their outputs) add the `-v` flag like so:
