@@ -519,6 +519,8 @@ function install_requirements_linux_wsl {
     # Adds your local bin to your path if it is not already in your path
     local_bin_check_command="grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' "
     local_bin_check_command+="\"${HOME}/${bash_login_filename}\""
+    local_bin_false_before=$'Your local bin is not in your path. ❌\n\n'
+    local_bin_false_before+=$'Adding your local bin to your path... 📂\n\n'
     local_bin_false_after=$'Your local bin is now in your path! ✅\nNow, please restart your '
     local_bin_false_after+=$'Terminal to load your local bin properly into your \$PATH.\n\n'
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
@@ -531,7 +533,7 @@ function install_requirements_linux_wsl {
         --true-print-after "" \
         --true-echo-newline "false" \
         --true-command "" \
-        --false-print-before $'Adding your local bin to your path... 📂\n\n' \
+        --false-print-before "$local_bin_false_before" \
         --false-print-after "$local_bin_false_after" \
         --false-echo-newline "false" \
         --false-command "$local_bin_false_command" \
