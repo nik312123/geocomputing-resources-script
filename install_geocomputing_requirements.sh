@@ -516,6 +516,21 @@ function install_requirements_linux_wsl {
     zsh_login_filename=".zshrc"
     create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
     
+    # Adds your local bin to your path if it is not already in your path
+    local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\" "
+    local_bin_false_command+=">> $HOME/$bash_login_filename"
+    run_command_conditional \
+        --check-command "grep -q 'export PATH=\"$HOME/.local/bin:\$PATH\"'" \
+        --true-print-before $'Your local bin is already in your path! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before $'Adding your local bin to your path... 📂\n\n' \
+        --false-print-after $'Your local bin is now in your path! ✅\n\n' \
+        --false-echo-newline "false" \
+        --false-command "$local_bin_false_command" \
+        --exit-if-false "false"
+    
     # Uninstalls Anaconda if it is installed
     uninstall_anaconda
     
