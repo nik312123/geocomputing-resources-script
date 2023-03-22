@@ -195,7 +195,7 @@ function create_bash_login_files {
         bash_login_false_before="${HOME}/${bash_login_filename}"$' could not be found. Creating it for '
         bash_login_false_before+=$'you... 📝\n\n'
         run_command_conditional \
-            --check-command "test -f \"$HOME/$bash_login_filename\"" \
+            --check-command "test -f \"${HOME}/${bash_login_filename}\"" \
             --true-print-before "" \
             --true-print-after "" \
             --true-echo-newline "false" \
@@ -225,13 +225,13 @@ function create_bash_login_files {
 # Uninstalls Anaconda if it is installed
 function uninstall_anaconda {
     anaconda_paths=(
-        "$HOME/.conda"
-        "$HOME/.condarc"
-        "$HOME/.continuum"
-        "$HOME/.anaconda_backup"
-        "$HOME/anaconda*"
-        "$HOME/.spyder*"
-        "$HOME/opt/anaconda*"
+        "${HOME}/.conda"
+        "${HOME}/.condarc"
+        "${HOME}/.continuum"
+        "${HOME}/.anaconda_backup"
+        "${HOME}/anaconda*"
+        "${HOME}/.spyder*"
+        "${HOME}/opt/anaconda*"
         "/Applications/Anaconda-Navigator.app"
         "/usr/local/anaconda*"
         "/opt/anaconda*"
@@ -239,8 +239,8 @@ function uninstall_anaconda {
         "/usr/local/bin/conda*"
         "/usr/bin/anaconda*"
         "/usr/bin/conda*"
-        "$HOME/bin/anaconda*"
-        "$HOME/bin/conda*"
+        "${HOME}/bin/anaconda*"
+        "${HOME}/bin/conda*"
         "/usr/share/applications/anaconda-navigator.desktop"
         "/usr/share/applications/anaconda.desktop"
         "/usr/share/icons/hicolor/*/apps/anaconda.png"
@@ -520,9 +520,9 @@ function install_requirements_linux_wsl {
     local_bin_false_after=$'Your local bin is now in your path! ✅\nNow, please restart your '
     local_bin_false_after+=$'Terminal to load your local bin properly into your \$PATH.\n\n'
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\" "
-    local_bin_false_command+=">> $HOME/$bash_login_filename"
+    local_bin_false_command+=">> ${HOME}/${bash_login_filename}"
     run_command_conditional \
-        --check-command "grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' \"$HOME/$bash_login_filename\"" \
+        --check-command "grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' \"${HOME}/${bash_login_filename}\"" \
         --true-print-before $'Your local bin is already in your path! ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
