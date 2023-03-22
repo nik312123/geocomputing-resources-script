@@ -522,7 +522,7 @@ function install_requirements_linux_wsl {
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\" "
     local_bin_false_command+=">> $HOME/$bash_login_filename"
     run_command_conditional \
-        --check-command "grep -q 'export PATH=\"$HOME/.local/bin:\$PATH\"'" \
+        --check-command "grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' \"$HOME/$bash_login_filename\"" \
         --true-print-before $'Your local bin is already in your path! ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
