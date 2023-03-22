@@ -192,8 +192,8 @@ function create_bash_login_files {
     zsh_login_filename="$2"
     
     # If the bash login file does not exist, create it!
-        bash_login_false_before="${HOME}/${bash_login_filename}"$' could not be found. Creating it for '
-        bash_login_false_before+=$'you... 📝\n\n'
+        bash_login_false_before="${HOME}/${bash_login_filename}"$' could not be found. Creating it '
+        bash_login_false_before+=$'for you... 📝\n\n'
         run_command_conditional \
             --check-command "test -f \"${HOME}/${bash_login_filename}\"" \
             --true-print-before "" \
@@ -207,8 +207,8 @@ function create_bash_login_files {
             --exit-if-false "false"
         
         # If the zsh login file does not exist, create it!
-        zsh_login_false_before="${HOME}/${zsh_login_filename}"$' could not be found. Creating it for '
-        zsh_login_false_before+=$'you... 📝\n\n'
+        zsh_login_false_before="${HOME}/${zsh_login_filename}"$' could not be found. Creating it '
+        zsh_login_false_before+=$'for you... 📝\n\n'
         run_command_conditional \
             --check-command "test -f \"${HOME}/${zsh_login_filename}\"" \
             --true-print-before "" \
@@ -517,12 +517,16 @@ function install_requirements_linux_wsl {
     create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
     
     # Adds your local bin to your path if it is not already in your path
+    local_bin_check_command="grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' "
+    local_bin_check_command+="\"${HOME}/${bash_login_filename}\""
     local_bin_false_after=$'Your local bin is now in your path! ✅\nNow, please restart your '
     local_bin_false_after+=$'Terminal to load your local bin properly into your \$PATH.\n\n'
-    local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\" "
-    local_bin_false_command+=">> ${HOME}/${bash_login_filename}"
+    local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
+    local_bin_false_command+=" >> ${HOME}/${bash_login_filename}"
+    local_bin_false_command+=" && printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
+    local_bin_false_command+=" >> ${HOME}/${zsh_login_filename}"
     run_command_conditional \
-        --check-command "grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' \"${HOME}/${bash_login_filename}\"" \
+        --check-command "$local_bin_check_command" \
         --true-print-before $'Your local bin is already in your path! ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
