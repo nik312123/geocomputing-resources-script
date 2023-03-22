@@ -477,8 +477,8 @@ function install_requirements_macos {
     # Sets up pip and python aliases if not already set up
     alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
     
-    # Installs gdal through Homebrew if not already installed
-    run_homebrew_install "gdal" "🌎"
+    # Installs GDAL through Homebrew if not already installed
+    run_homebrew_install "GDAL" "🌎"
     
     # Installs or updates the required Python packages
     install_required_python_packages
@@ -519,8 +519,8 @@ function install_requirements_linux_wsl {
     # Adds your local bin to your path if it is not already in your path
     local_bin_check_command="grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' "
     local_bin_check_command+="\"${HOME}/${bash_login_filename}\""
-    local_bin_false_after=$'Your local bin is now in your path! ✅\nNow, please restart your '
-    local_bin_false_after+=$'Terminal to load your local bin properly into your \$PATH.\n\n'
+    local_bin_false_after=$'Your local bin is now in your path! ✅\n\nNow, please restart your '
+    local_bin_false_after+=$'Terminal to load your local bin properly into your $PATH.\n\n'
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
     local_bin_false_command+=" >> ${HOME}/${bash_login_filename}"
     local_bin_false_command+=" && printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
@@ -542,7 +542,7 @@ function install_requirements_linux_wsl {
     
     # Install python3 and pip3 through apt if not already installed
     python3_false_before=$'python3 and pip3 are not installed. ❌\n\n'
-    python3_false_before+=$'Installing Python3 and pip3... 🐍\n\n'
+    python3_false_before+=$'Installing python3 and pip3... 🐍\n\n'
     run_command_conditional \
         --check-command "which python3 && which pip3" \
         --true-print-before $'python3 and pip3 are already installed. ✅\n\n' \
@@ -561,11 +561,11 @@ function install_requirements_linux_wsl {
     # Sets up pip and python aliases if not already set up
     alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
     
-    # Adds the apt repository for gdal if not already added
+    # Adds the apt repository for GDAL if not already added
     run_command_conditional \
         --check-command "true" \
-        --true-print-before $'Adding the apt repository for gdal... 📦\n\n' \
-        --true-print-after $'The apt repository for gdal has been added! ✅\n\n' \
+        --true-print-before $'Adding the apt repository for GDAL... 📦\n\n' \
+        --true-print-after $'The apt repository for GDAL has been added! ✅\n\n' \
         --true-echo-newline "true" \
         --true-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
         --false-print-before "" \
@@ -574,11 +574,11 @@ function install_requirements_linux_wsl {
         --false-command "" \
         --exit-if-false "false"
     
-    # Installs gdal through apt if not already installed
+    # Installs GDAL through apt if not already installed
     run_command_conditional \
         --check-command "true" \
-        --true-print-before $'Installing gdal... 🌎\n\n' \
-        --true-print-after $'gdal has been installed! ✅\n\n' \
+        --true-print-before $'Installing GDAL... 🌎\n\n' \
+        --true-print-after $'GDAL has been installed! ✅\n\n' \
         --true-echo-newline "true" \
         --true-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
         --false-print-before "" \
