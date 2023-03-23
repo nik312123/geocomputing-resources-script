@@ -417,7 +417,8 @@ function install_requirements_macos {
         try_running_command "$load_brew_zsh" "false"
         
         printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
-        printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH.\n\n"
+        printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH and "
+        printf "run this script again.\n\n"
         exit 1
     fi
     
@@ -447,7 +448,8 @@ function install_requirements_macos {
     bash_version_false_before=$'Your current bash is not up to date in your current shell. ❌\n\n'
     bash_version_false_before+=$'Updating your current bash for your shell... 🔼\n\n'
     bash_version_false_after=$'Your current bash is now up to date in your current shell! ✅\n\n'
-    bash_version_false_after+=$'Now, please restart your Terminal to use the updated bash.\n\n'
+    bash_version_false_after+=$'Now, please restart your Terminal to use the updated bash and run '
+    bash_version_false_after+=$'this script again.\n\n'
     bash_version_false_command="if [ \"\$SHELL\" = \"/bin/bash\" ]; then chsh -s "
     bash_version_false_command+="\"\$(brew --prefix)/bin/bash\"; fi"
     run_command_conditional \
@@ -522,7 +524,8 @@ function install_requirements_linux_wsl {
     local_bin_false_before=$'Your local bin is not in your path. ❌\n\n'
     local_bin_false_before+=$'Adding your local bin to your path... 📂\n\n'
     local_bin_false_after=$'Your local bin is now in your path! ✅\n\nNow, please restart your '
-    local_bin_false_after+=$'Terminal to load your local bin properly into your $PATH.\n\n'
+    local_bin_false_after+=$'Terminal to load your local bin properly into your $PATH and run this '
+    local_bin_false_after+=$'script again.\n\n'
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
     local_bin_false_command+=" >> ${HOME}/${bash_login_filename}"
     local_bin_false_command+=" && printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
