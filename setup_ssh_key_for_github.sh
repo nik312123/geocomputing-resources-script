@@ -264,7 +264,7 @@ add_start_ssh_agent_false_command="printf '\neval \"\$(ssh-agent -s)\"\n' >> "
 add_start_ssh_agent_false_command+="$HOME/$bash_login_filename && printf "
 add_start_ssh_agent_false_command+="'\neval \"\$(ssh-agent -s)\"\n' >> $HOME/$zsh_login_filename"
 run_command_conditional \
-    --check-command "ps aux | grep "ssh-agent" | grep -v grep" \
+    --check-command "ps aux | grep \"ssh-agent\" | grep -v grep" \
     --true-print-before $'SSH agent is already running! ✅\n\n' \
     --true-print-after "" \
     --true-echo-newline "false" \
