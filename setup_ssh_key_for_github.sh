@@ -233,8 +233,8 @@ if ! read -rp "Enter the email associated with your GitHub account: " github_ema
 fi
 printf "\n"
 
-# Performs a basic check to see if the email is valid
-basic_email_regex="^\w+@\w+$"
+# Basic check to see if the email is valid (Source: https://www.regular-expressions.info/email.html)
+basic_email_regex='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 if ! [[ $github_email =~ $basic_email_regex ]]; then
     printf "Please provide a valid email address.\n\n"
     exit 1
