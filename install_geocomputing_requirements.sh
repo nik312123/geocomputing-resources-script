@@ -319,8 +319,8 @@ function install_required_python_packages {
     python_package_true_command+="geocomputing-resources-script/master/requirements.txt\""
     run_command_conditional \
         --check-command "true" \
-        --true-print-before $'Updating or installing required Python packages... 📦\n\n' \
-        --true-print-after $'Required Python packages installed or updated! ✅\n\n' \
+        --true-print-before $'Installing or updating the required Python packages... 📦\n\n' \
+        --true-print-after $'The required Python packages have been installed or updated! ✅\n\n' \
         --true-echo-newline "true" \
         --true-command "$python_package_true_command" \
         --false-print-before "" \
