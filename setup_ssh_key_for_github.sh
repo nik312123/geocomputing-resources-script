@@ -231,6 +231,7 @@ fi
 if ! read -rp "Enter the email associated with your GitHub account: " github_email; then
     print_error_and_exit "$github_email_command"
 fi
+printf "\n"
 
 # Performs a basic check to see if the email is valid
 basic_email_regex="^\w+@\w+$"
