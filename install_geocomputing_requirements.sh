@@ -22,13 +22,14 @@ function try_running_command {
     fi
     
     if [[ "$run_without_redirecting_output" == "true" ]]; then
-        fd_redirect=""
+        eval "$command"
+        command_execution_status="$?"
     else
-        fd_redirect=">&3 2>&4"
+        eval "$command" 1>&3 2>&4
+        command_execution_status="$?"
     fi
     
-    # shellcheck disable=SC2046
-    if ! eval "$command" $(eval "echo ${fd_redirect}"); then
+    if [[ "$command_execution_status" != "0" ]]; then
         print_error_and_exit "$command"
     fi
     
