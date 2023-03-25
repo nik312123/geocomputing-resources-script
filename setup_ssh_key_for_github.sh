@@ -212,11 +212,11 @@ os_type="$(uname -s)"
 if [ "$os_type" == "Darwin" ]; then
     bash_login_filename=".bash_profile"
     zsh_login_filename=".zprofile"
-elif [ "$os_type" == "MINGW"* ]; then
+elif [ "$os_type" == "Linux" ]; then
     bash_login_filename=".bashrc"
     zsh_login_filename=".zshrc"
 else
-    printf "This script only supports macOS and Git Bash.\n\n"
+    printf "This script only supports macOS and Linux/WSL.\n\n"
     exit 1
 fi
 
