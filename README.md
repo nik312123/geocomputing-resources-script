@@ -34,7 +34,7 @@ In fact, it will ensure that all of the installed components are up to date and 
 
 ## Running GitHub ssh key setup script
 
-Note: This script can be run on macOS or Windows (via Git Bash).
+Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
 
 To run the aforementioned installation script, you may run the following:
 
