@@ -15,12 +15,19 @@ function print_error_and_exit {
 function try_running_command {
     command="$1"
     add_newline_after_command="$2"
+    run_without_redirecting_output="$3"
     
     if $echo_on; then
         printf "> %s\n\n" "$command"
     fi
     
-    if ! eval "$command" >&3 2>&4; then
+    if [[ "$run_without_redirecting_output" == "true" ]]; then
+        fd_redirect=""
+    else
+        fd_redirect=">&3 2>&4"
+    fi
+    
+    if ! eval "$command" $(eval "echo ${fd_redirect}"); then
         print_error_and_exit "$command"
     fi
     
@@ -51,11 +58,13 @@ function raise_error_if_index_set {
 # false_command and the false_print_after after the false_command. If true_echo_newline is provided,
 # prints a newline after the true_command if echo_on is true. If false_echo_newline is provided,
 # prints a newline after the false_command if echo_on is true. If exit_if_false is set, exits the
-# script with an error if the check command is false.
+# script with an error if the check command is false. If --force-display-output is set, force the
+# output of the true and false commands to be displayed even if echo_on is false.
 function run_command_conditional {
     # Parameter arguments
     local check_command true_print_before true_print_after true_echo_newline true_command
     local false_print_before false_print_after false_echo_newline false_command exit_if_false
+    local force_display_output
     
     # Array of 0s and 1s, where the index represents the parameter and the value represents whether
     # the parameter was provided
@@ -65,6 +74,7 @@ function run_command_conditional {
     true_echo_newline="false"
     false_echo_newline="false"
     exit_if_false="false"
+    force_display_output="false"
         
     # Parses the parameter arguments
     # Based on https://stackoverflow.com/a/12128447
@@ -138,6 +148,12 @@ function run_command_conditional {
                 fi
                 exit_if_false="true"
                 ;;
+            --force-display-output)
+                if [[ "$force_display_output" == "true" ]]; then
+                    raise_parameter_provided_more_than_once_error "--force-display-output"
+                fi
+                force_display_output="true"
+                ;;
             *)
                 printf "Unknown parameter: %s\n" "$1" >&2
                 return 1
@@ -158,7 +174,7 @@ function run_command_conditional {
             printf -- "[--true-echo-newline] --true-command <command> " >&2
             printf -- "--false-print-before <string> --false-print-after <string> " >&2
             printf -- "[--false-echo-newline] --false-command <command> " >&2
-            printf -- "[--exit-if-false]\n\n" >&2
+            printf -- "[--exit-if-false] [--force-display-output]\n\n" >&2
             return 1
         fi
     done
@@ -169,7 +185,7 @@ function run_command_conditional {
         
         # Runs the true command if it is not empty
         if [[ -n "$true_command" ]]; then
-            try_running_command "$true_command" "$true_echo_newline"
+            try_running_command "$true_command" "$true_echo_newline" "$force_display_output"
         fi
         
         printf "%s" "$true_print_after"
@@ -178,7 +194,7 @@ function run_command_conditional {
         
         # Runs the false command if it is not empty
         if [[ -n "$false_command" ]]; then
-            try_running_command "$false_command" "$false_echo_newline"
+            try_running_command "$false_command" "$false_echo_newline" "$force_display_output"
         fi
         
         printf "%s" "$false_print_after"
