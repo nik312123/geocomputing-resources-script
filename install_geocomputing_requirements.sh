@@ -91,21 +91,21 @@ function run_command_conditional {
             --check-command)
                 param_idx=0
                 raise_error_if_index_set required_params_provided[@] $param_idx "--check-command"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 check_command="${2}"
                 shift
                 ;;
             --true-print-before)
                 param_idx=1
                 raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-before"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 true_print_before="${2}"
                 shift
                 ;;
             --true-print-after)
                 param_idx=2
                 raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-after"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 true_print_after="${2}"
                 shift
                 ;;
@@ -118,28 +118,28 @@ function run_command_conditional {
             --true-command)
                 param_idx=3
                 raise_error_if_index_set required_params_provided[@] $param_idx "--true-command"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 true_command="${2}"
                 shift
                 ;;
             --false-print-before)
                 param_idx=4
                 raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-before"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 false_print_before="${2}"
                 shift
                 ;;
             --false-print-after)
                 param_idx=5
                 raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-after"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 false_print_after="${2}"
                 shift
                 ;;
             --false-command)
                 param_idx=6
                 raise_error_if_index_set required_params_provided[@] $param_idx "--false-command"
-                required_params_provided[$param_idx]=1
+                required_params_provided[param_idx]=1
                 false_command="${2}"
                 shift
                 ;;
