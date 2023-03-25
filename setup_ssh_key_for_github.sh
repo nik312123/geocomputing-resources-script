@@ -361,6 +361,19 @@ run_command_conditional \
     --false-echo-newline \
     --false-command "ssh-add ~/.ssh/id_nik312123_github_rsa"
 
+# Authenticates the gh CLI with GitHub
+gh_authenticate_false_before=$'gh is not authenticated with GitHub. ❌\n\n'
+gh_authenticate_false_before+=$'Authenticating gh with GitHub... 🔑\n'
+run_command_conditional \
+    --check-command "gh auth status -h \"github.com\"" \
+    --true-print-before $'gh is already authenticated with GitHub! ✅\n\n' \
+    --true-print-after "" \
+    --true-command "" \
+    --false-print-before "$gh_authenticate_false_before" \
+    --false-print-after $'gh has been authenticated with GitHub! ✅\n\n' \
+    --false-echo-newline \
+    --false-command "gh auth login -p \"ssh\" -h \"github.com\" --web </dev/null" \
+    --force-display-output
 
 printf "Congratulations! Your SSH key for GitHub is properly set up! 💻\n\n"
 printf "Please quit and reopen the Terminal to finalize the process.\n\n"
