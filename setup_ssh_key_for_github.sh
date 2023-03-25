@@ -380,5 +380,19 @@ run_command_conditional \
     --false-command "$gh_authenticate_command" \
     --force-display-output
 
+# Adds the SSH key to GitHub if it is not already there
+github_add_key_false_before=$'Geocomputing SSH key is not added to GitHub. ❌\n\n'
+github_add_key_false_before+=$'Adding geocomputing SSH key to GitHub. 🔑\n\n'
+github_add_key_false_command="gh ssh-key add $HOME/.ssh/id_nik312123_github_rsa.pub -t "
+github_add_key_false_command+="\"Geocomputing SSH key\""
+run_command_conditional \
+    --check-command "gh ssh-key list | grep -q \"Geocomputing SSH key\"" \
+    --true-print-before $'Geocomputing SSH key is added to GitHub! ✅\n\n' \
+    --true-print-after "" \
+    --true-command "" \
+    --false-print-before "$github_add_key_false_before" \
+    --false-print-after $'Geocomputing SSH key has been added to GitHub! ✅\n\n' \
+    --false-command "$github_add_key_false_command" \
+
 printf "Congratulations! Your SSH key for GitHub is properly set up! 💻\n\n"
 printf "Please quit and reopen the Terminal to finalize the process.\n\n"
