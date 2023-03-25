@@ -584,7 +584,7 @@ function install_requirements_linux_wsl {
     python3_false_before+=$'Installing python3 and pip3... 🐍\n\n'
     run_command_conditional \
         --check-command "dpkg -s python3 && dpkg -s python3-pip" \
-        --true-print-before $'python3 and pip3 are already installed. ✅\n\n' \
+        --true-print-before $'python3 and pip3 are installed. ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
         --true-command "" \
