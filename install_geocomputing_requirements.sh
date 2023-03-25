@@ -467,6 +467,9 @@ function install_requirements_macos {
     # Installs git through homebrew if not already installed
     run_homebrew_install "git" "🐙"
     
+    # Installs gh through homebrew if not already installed
+    run_homebrew_install "gh" "🐙"
+    
     # Uninstalls Anaconda if it is installed
     uninstall_anaconda
     
@@ -520,6 +523,28 @@ function install_requirements_linux_wsl {
         --false-print-after $'Script dependencies have been installed! ✅\n\n' \
         --false-echo-newline "true" \
         --false-command "sudo apt install $script_dependencies -y" \
+        --exit-if-false "false"
+    
+    # Installs gh if it is not already installed
+    gh_keyring_path="/usr/share/keyrings/githubcli-archive-keyring.gpg"
+    gh_install_false_command="curl -fsSL "
+    gh_install_false_command+="https://cli.github.com/packages/githubcli-archive-keyring.gpg | "
+    gh_install_false_command+="sudo dd of=$gh_keyring_path"
+    gh_install_false_command+=" && sudo chmod go+r $gh_keyring_path"
+    gh_install_false_command+=" && echo \"deb [arch=$(dpkg --print-architecture) signed-by="
+    gh_install_false_command+="$gh_keyring_path] https://cli.github.com/packages stable main" "
+    gh_install_false_command+="| sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null"
+    gh_install_false_command+=" && sudo apt update -y && sudo apt install gh -y"
+    run_command_conditional \
+        --check-command "command -v gh" \
+        --true-print-before $'gh is installed! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before $'gh is not installed. ❌\n\nInstalling gh... 🐙\n\n' \
+        --false-print-after $'gh has been installed! ✅\n\n' \
+        --false-echo-newline "true" \
+        --false-command "$gh_install_false_command" \
         --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
