@@ -27,6 +27,7 @@ function try_running_command {
         fd_redirect=">&3 2>&4"
     fi
     
+    # shellcheck disable=SC2046
     if ! eval "$command" $(eval "echo ${fd_redirect}"); then
         print_error_and_exit "$command"
     fi
