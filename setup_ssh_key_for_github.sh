@@ -366,6 +366,9 @@ run_command_conditional \
 # Authenticates the gh CLI with GitHub
 gh_authenticate_false_before=$'gh is not authenticated with GitHub. ❌\n\n'
 gh_authenticate_false_before+=$'Authenticating gh with GitHub... 🔑\n'
+gh_authenticate_command="gh auth login -p \"ssh\" "
+gh_authenticate_command+="-s \"admin:public_key, gist, read:org, repo\" -h \"github.com\" --web "
+gh_authenticate_command+="< /dev/null"
 run_command_conditional \
     --check-command "gh auth status -h \"github.com\"" \
     --true-print-before $'gh is already authenticated with GitHub! ✅\n\n' \
@@ -374,7 +377,7 @@ run_command_conditional \
     --false-print-before "$gh_authenticate_false_before" \
     --false-print-after $'gh has been authenticated with GitHub! ✅\n\n' \
     --false-echo-newline \
-    --false-command "gh auth login -p \"ssh\" -h \"github.com\" --web </dev/null" \
+    --false-command "$gh_authenticate_command" \
     --force-display-output
 
 printf "Congratulations! Your SSH key for GitHub is properly set up! 💻\n\n"
