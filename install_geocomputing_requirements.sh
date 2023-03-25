@@ -72,20 +72,23 @@ function run_command_conditional {
         previous_argument="$1"
         case "${1}" in
             --check-command)
-                raise_error_if_index_set required_params_provided[@] 0 "--check-command"
-                required_params_provided[0]=1
+                param_idx=0
+                raise_error_if_index_set required_params_provided[@] $param_idx "--check-command"
+                required_params_provided[$param_idx]=1
                 check_command="${2}"
                 shift
                 ;;
             --true-print-before)
-                raise_error_if_index_set required_params_provided[@] 1 "--true-print-before"
-                required_params_provided[1]=1
+                param_idx=1
+                raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-before"
+                required_params_provided[$param_idx]=1
                 true_print_before="${2}"
                 shift
                 ;;
             --true-print-after)
-                raise_error_if_index_set required_params_provided[@] 2 "--true-print-after"
-                required_params_provided[2]=1
+                param_idx=2
+                raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-after"
+                required_params_provided[$param_idx]=1
                 true_print_after="${2}"
                 shift
                 ;;
@@ -96,26 +99,30 @@ function run_command_conditional {
                 true_echo_newline="true"
                 ;;
             --true-command)
-                raise_error_if_index_set required_params_provided[@] 4 "--true-command"
-                required_params_provided[3]=1
+                param_idx=3
+                raise_error_if_index_set required_params_provided[@] $param_idx "--true-command"
+                required_params_provided[$param_idx]=1
                 true_command="${2}"
                 shift
                 ;;
             --false-print-before)
-                raise_error_if_index_set required_params_provided[@] 5 "--false-print-before"
-                required_params_provided[4]=1
+                param_idx=4
+                raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-before"
+                required_params_provided[$param_idx]=1
                 false_print_before="${2}"
                 shift
                 ;;
             --false-print-after)
-                raise_error_if_index_set required_params_provided[@] 6 "--false-print-after"
-                required_params_provided[5]=1
+                param_idx=5
+                raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-after"
+                required_params_provided[$param_idx]=1
                 false_print_after="${2}"
                 shift
                 ;;
             --false-command)
-                raise_error_if_index_set required_params_provided[@] 7 "--false-command"
-                required_params_provided[6]=1
+                param_idx=6
+                raise_error_if_index_set required_params_provided[@] $param_idx "--false-command"
+                required_params_provided[$param_idx]=1
                 false_command="${2}"
                 shift
                 ;;
