@@ -532,7 +532,7 @@ function install_requirements_linux_wsl {
     gh_install_false_command+="sudo dd of=$gh_keyring_path"
     gh_install_false_command+=" && sudo chmod go+r $gh_keyring_path"
     gh_install_false_command+=" && echo \"deb [arch=$(dpkg --print-architecture) signed-by="
-    gh_install_false_command+="$gh_keyring_path] https://cli.github.com/packages stable main" "
+    gh_install_false_command+="$gh_keyring_path] https://cli.github.com/packages stable main\" "
     gh_install_false_command+="| sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null"
     gh_install_false_command+=" && sudo apt update -y && sudo apt install gh -y"
     run_command_conditional \
