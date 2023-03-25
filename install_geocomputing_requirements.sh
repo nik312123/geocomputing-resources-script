@@ -601,16 +601,20 @@ function install_requirements_linux_wsl {
     alias_python3_and_pip "$bash_login_filename" "$zsh_login_filename"
     
     # Adds the apt repository for GDAL if not already added
+    gdal_repository_check_command="apt-cache policy | grep -q "
+    gdal_repository_check_command+="\"ppa.launchpadcontent.net/ubuntugis/ppa/ubuntu\""
+    gdal_repository_false_before=$'The apt repository for GDAL was not installed. ❌\n\n'
+    gdal_repository_false_before+=$'Adding the apt repository for GDAL... 📦\n\n'
     run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Adding the apt repository for GDAL... 📦\n\n' \
-        --true-print-after $'The apt repository for GDAL has been added! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
+        --check-command "$gdal_repository_check_command" \
+        --true-print-before $'The apt repository for GDAL is added! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$gdal_repository_false_before" \
+        --false-print-after "The apt repository for GDAL has been added! ✅\n\n" \
+        --false-echo-newline "true" \
+        --false-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
         --exit-if-false "false"
     
     # Installs GDAL through apt if not already installed
