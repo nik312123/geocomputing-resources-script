@@ -13,15 +13,18 @@ function print_error_and_exit {
 
 # Tries to run a command and exits the script if it fails
 function try_running_command {
+    command="$1"
+    add_newline_after_command="$2"
+    
     if $echo_on; then
-        printf "> %s\n\n" "$1"
+        printf "> %s\n\n" "$command"
     fi
     
-    if ! eval "$1" >&3 2>&4; then
-        print_error_and_exit "$1"
+    if ! eval "$command" >&3 2>&4; then
+        print_error_and_exit "$command"
     fi
     
-    if $echo_on && [[ "$2" == "true" ]]; then
+    if $echo_on && [[ "$add_newline_after_command" == "true" ]]; then
         printf "\n"
     fi
 }
