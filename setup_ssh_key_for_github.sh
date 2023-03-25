@@ -321,11 +321,10 @@ run_command_conditional \
     --true-command "" \
     --false-print-before "$add_key_to_ssh_agent_false_before" \
     --false-print-after $'SSH key has been added to SSH agent! ✅\n\n' \
-    --false-echo-newline "false" \
+    --false-echo-newline "true" \
     --false-command "ssh-add ~/.ssh/id_nik312123_github_rsa" \
     --exit-if-false "false"
 
 
 printf "Congratulations! Your SSH key for GitHub is properly set up! 💻\n\n"
 printf "Please quit and reopen the Terminal to finalize the process.\n\n"
-printf "Also, please add your .\n\n"
