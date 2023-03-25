@@ -620,15 +620,15 @@ function install_requirements_linux_wsl {
     # Installs GDAL through apt if not already installed
     run_command_conditional \
         --check-command "dpkg -s gdal-bin && dpkg -s libgdal-dev && dpkg -s python3-gdal" \
-        --true-print-before $'Installing GDAL... 🌎\n\n' \
-        --true-print-after $'GDAL has been installed! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
-        --false-print-before "" \
-        --false-print-after "" \
+        --true-print-before $'GDAL is installed! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before $'GDAL is not installed. ❌\n\nInstalling GDAL... 🌎\n\n' \
+        --false-print-after $'GDAL has been installed! ✅\n\n' \
         --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+        --false-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
+        --exit-if-false "true"
     
     # Installs or updates the required Python packages
     install_required_python_packages
