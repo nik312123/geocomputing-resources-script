@@ -76,7 +76,7 @@ function run_command_conditional {
     
     # Array of 0s and 1s, where the index represents the parameter and the value represents whether
     # the parameter was provided
-    required_params_provided=($(seq 0 6 | xargs -I{} echo 0))
+    read -ra required_params_provided < <(printf '0%.0s ' $(seq 0 6))
     
     # Default values for optional parameters
     true_echo_newline="false"
