@@ -31,7 +31,13 @@ function try_running_command {
         print_error_and_exit "$command"
     fi
     
-    if $echo_on && [[ "$add_newline_after_command" == "true" ]]; then
+    if $echo_on || [[ "$run_without_redirecting_output" == "true" ]]; then
+        display_output=true
+    else
+        display_output=false
+    fi
+    
+    if $display_output && [[ "$add_newline_after_command" == "true" ]]; then
         printf "\n"
     fi
 }
