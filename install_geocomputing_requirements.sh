@@ -510,7 +510,7 @@ function install_requirements_linux_wsl {
     for dependency in $script_dependencies; do
         script_dependencies_check_command+="dpkg -s $dependency && "
     done
-    script_dependencies_check_command=${dependencies_check_command% && }
+    script_dependencies_check_command=${script_dependencies_check_command% && }
     script_dependencies_false_before=$'Script dependencies are not installed. ❌\n\n'
     script_dependencies_false_before+=$'Installing script dependencies... 🧱\n\n'
     run_command_conditional \
