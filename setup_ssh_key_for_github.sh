@@ -225,7 +225,7 @@ github_email_command="read -rp \"Enter the email associated with your GitHub acc
 github_email_command+="github_email"
 
 if $echo_on; then
-    printf "> ${github_email_command}\n\n"
+    printf "> $%s\n\n" "$github_email_command"
 fi
 
 if ! read -rp "Enter the email associated with your GitHub account: " github_email; then
