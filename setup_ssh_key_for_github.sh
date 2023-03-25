@@ -314,7 +314,7 @@ run_command_conditional \
 add_key_to_ssh_agent_false_before=$'SSH key has not been added to SSH agent. ❌\n\n'
 add_key_to_ssh_agent_false_before+=$'Adding SSH key to SSH agent... 🕵️‍♂️\n\n'
 run_command_conditional \
-    --check-command "ssh-keygen -lf '$HOME/id_nik312123_github_rsa.pub'" \
+    --check-command "ssh-keygen -lf '$HOME/.ssh/id_nik312123_github_rsa.pub'" \
     --true-print-before $'SSH key has already been added to SSH agent! ✅\n\n' \
     --true-print-after "" \
     --true-echo-newline "false" \
