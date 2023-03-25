@@ -29,92 +29,107 @@ function try_running_command {
     fi
 }
 
-# Raises an error if any parameter is provided more than once
+# Raises an error if the parameter is provided more than once
+function raise_parameter_provided_more_than_once_error {
+    printf "The %s parameter was provided more than once.\n\n" "$1" >&2
+    exit 1
+}
+
+# Raises an error if the given required parameter is provided more than once
 # Takes in the array, index, and name of the parameter
 function raise_error_if_index_set {
     declare -a arr=("${!1}")
     
     if [ "${arr[$2]}" -eq 1 ]; then
-        printf "The %s parameter was provided more than once.\n\n" "$3" >&2
-        exit 1
+        raise_parameter_provided_more_than_once_error "$3"
     fi
 }
 
-# If the result of evaluating the check command is true (no error), prints the true-related print
-# arguments and runs the true_command argument. Otherwise, prints the false-related print arguments
-# and runs the false_command argument, exiting the script with an error if exit_if_false is true.
-# The true_echo_newline and false_echo_newline arguments are used to determine whether to print a
-# newline after the true and false commands, respectively, if echo_on is true.
+# Runs the true command if the check command is true, and the false command otherwise. If running
+# the true command, prints the true_print_before before the true_command and the true_print_after
+# after the true_command. If running the false command, prints the false_print_before before the
+# false_command and the false_print_after after the false_command. If true_echo_newline is provided,
+# prints a newline after the true_command if echo_on is true. If false_echo_newline is provided,
+# prints a newline after the false_command if echo_on is true. If exit_if_false is set, exits the
+# script with an error if the check command is false.
 function run_command_conditional {
     # Parameter arguments
     local check_command true_print_before true_print_after true_echo_newline true_command
     local false_print_before false_print_after false_echo_newline false_command exit_if_false
     
-    required_params_provided=($(seq 0 9 | xargs -I{} echo 0))
+    # Array of 0s and 1s, where the index represents the parameter and the value represents whether
+    # the parameter was provided
+    required_params_provided=($(seq 0 6 | xargs -I{} echo 0))
     
+    # Default values for optional parameters
+    true_echo_newline="false"
+    false_echo_newline="false"
+    exit_if_false="false"
+        
     # Parses the parameter arguments
     # Based on https://stackoverflow.com/a/12128447
     while [[ ${1} ]]; do
+        previous_argument="$1"
         case "${1}" in
             --check-command)
                 raise_error_if_index_set required_params_provided[@] 0 "--check-command"
                 required_params_provided[0]=1
-                check_command=${2}
+                check_command="${2}"
                 shift
                 ;;
             --true-print-before)
                 raise_error_if_index_set required_params_provided[@] 1 "--true-print-before"
                 required_params_provided[1]=1
-                true_print_before=${2}
+                true_print_before="${2}"
                 shift
                 ;;
             --true-print-after)
                 raise_error_if_index_set required_params_provided[@] 2 "--true-print-after"
                 required_params_provided[2]=1
-                true_print_after=${2}
+                true_print_after="${2}"
                 shift
                 ;;
             --true-echo-newline)
-                raise_error_if_index_set required_params_provided[@] 3 "--true-echo-newline"
-                required_params_provided[3]=1
-                true_echo_newline=${2}
-                shift
+                if [[ "$true_echo_newline" == "true" ]]; then
+                    raise_parameter_provided_more_than_once_error "--true-echo-newline"
+                fi
+                true_echo_newline="true"
                 ;;
             --true-command)
                 raise_error_if_index_set required_params_provided[@] 4 "--true-command"
-                required_params_provided[4]=1
-                true_command=${2}
+                required_params_provided[3]=1
+                true_command="${2}"
                 shift
                 ;;
             --false-print-before)
                 raise_error_if_index_set required_params_provided[@] 5 "--false-print-before"
-                required_params_provided[5]=1
-                false_print_before=${2}
+                required_params_provided[4]=1
+                false_print_before="${2}"
                 shift
                 ;;
             --false-print-after)
                 raise_error_if_index_set required_params_provided[@] 6 "--false-print-after"
-                required_params_provided[6]=1
-                false_print_after=${2}
+                required_params_provided[5]=1
+                false_print_after="${2}"
                 shift
                 ;;
             --false-command)
                 raise_error_if_index_set required_params_provided[@] 7 "--false-command"
-                required_params_provided[7]=1
-                false_command=${2}
+                required_params_provided[6]=1
+                false_command="${2}"
                 shift
                 ;;
             --false-echo-newline)
-                raise_error_if_index_set required_params_provided[@] 8 "--false-echo-newline"
-                required_params_provided[8]=1
-                false_echo_newline=${2}
-                shift
+                if [[ "$false_echo_newline" == "true" ]]; then
+                    raise_parameter_provided_more_than_once_error "--false-echo-newline"
+                fi
+                false_echo_newline="true"
                 ;;
             --exit-if-false)
-                raise_error_if_index_set required_params_provided[@] 9 "--exit-if-false"
-                required_params_provided[9]=1
-                exit_if_false=${2}
-                shift
+                if [[ "$exit_if_false" == "true" ]]; then
+                    raise_parameter_provided_more_than_once_error "--exit-if-false"
+                fi
+                exit_if_false="true"
                 ;;
             *)
                 printf "Unknown parameter: %s\n" "$1" >&2
@@ -123,7 +138,7 @@ function run_command_conditional {
         
         # Checks if the parameter argument is missing
         if ! shift; then
-            printf "Missing parameter argument." >&2
+            printf "Missing parameter argument for %s." "$previous_argument" >&2
             return 1
         fi
     done
@@ -133,10 +148,10 @@ function run_command_conditional {
         if [ "$element" -eq 0 ]; then
             printf -- "Usage: run_command_conditional --check-command <command> " >&2
             printf -- "--true-print-before <string> --true-print-after <string> " >&2
-            printf -- "--true-echo-newline <true/false> --true-command <command> " >&2
+            printf -- "[--true-echo-newline] --true-command <command> " >&2
             printf -- "--false-print-before <string> --false-print-after <string> " >&2
-            printf -- "--false-echo-newline <true/false> --false-command <command> " >&2
-            printf -- "--exit-if-false <true/false>\n\n" >&2
+            printf -- "[--false-echo-newline] --false-command <command> " >&2
+            printf -- "[--exit-if-false]" >&2
             return 1
         fi
     done
@@ -180,13 +195,12 @@ function run_homebrew_install {
     --check-command "brew list $1" \
     --true-print-before "$true_before" \
     --true-print-after "$true_after" \
-    --true-echo-newline "true" \
+    --true-echo-newline \
     --true-command "HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade $1" \
     --false-print-before "$false_before" \
     --false-print-after "$false_after" \
-    --false-echo-newline "true" \
-    --false-command "HOMEBREW_NO_AUTO_UPDATE=1 brew install $1" \
-    --exit-if-false "false"
+    --false-echo-newline \
+    --false-command "HOMEBREW_NO_AUTO_UPDATE=1 brew install $1"
 }
 
 # Creates the bash and zsh login files if they do not exist
@@ -201,13 +215,10 @@ function create_bash_login_files {
             --check-command "test -f \"$HOME/$bash_login_filename\"" \
             --true-print-before "" \
             --true-print-after "" \
-            --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$bash_login_false_before" \
             --false-print-after "$HOME/$bash_login_filename"$' created!\n\n' \
-            --false-echo-newline "false" \
             --false-command "touch \"$HOME/$bash_login_filename\"" \
-            --exit-if-false "false"
         
         # If the zsh login file does not exist, create it!
         zsh_login_false_before="$HOME/$zsh_login_filename"$' could not be found. Creating it '
@@ -216,13 +227,10 @@ function create_bash_login_files {
             --check-command "test -f \"$HOME/$zsh_login_filename\"" \
             --true-print-before "" \
             --true-print-after "" \
-            --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$zsh_login_false_before" \
             --false-print-after "$HOME/$zsh_login_filename"$' created!\n\n' \
-            --false-echo-newline "false" \
-            --false-command "touch \"$HOME/$zsh_login_filename\"" \
-            --exit-if-false "false"
+            --false-command "touch \"$HOME/$zsh_login_filename\""
 }
 
 # Uninstalls Anaconda if it is installed
@@ -258,13 +266,11 @@ function uninstall_anaconda {
         --check-command "command -v conda || command -v anaconda" \
         --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
         --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
-        --true-echo-newline "true" \
+        --true-echo-newline \
         --true-command "$anaconda_true_command" \
         --false-print-before $'Anaconda is not installed. ✅\n\n' \
         --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+        --false-command ""
 }
 
 # Upgrades pip
@@ -273,13 +279,11 @@ function upgrade_pip {
         --check-command "true" \
         --true-print-before $'Ensuring pip is up to date... 📚\n\n' \
         --true-print-after $'pip is up to date! ✅\n\n' \
-        --true-echo-newline "true" \
+        --true-echo-newline \
         --true-command "python3 -m pip install --upgrade pip" \
         --false-print-before "" \
         --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+        --false-command ""
 }
 
 # Adds aliases for pip and python if they are not aliased
@@ -306,13 +310,10 @@ function alias_python3_and_pip {
         --check-command "$python_check_command" \
         --true-print-before $'pip and python are properly aliased. ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$python_alias_false_before" \
         --false-print-after $'pip and python are properly aliased. ✅\n\n' \
-        --false-echo-newline "false" \
-        --false-command "$python_alias_false_command" \
-        --exit-if-false "false"
+        --false-command "$python_alias_false_command"
 }
 
 # Installs or updates the required Python packages
@@ -324,13 +325,11 @@ function install_required_python_packages {
         --check-command "true" \
         --true-print-before $'Installing or updating the required Python packages... 📦\n\n' \
         --true-print-after $'The required Python packages have been installed or updated! ✅\n\n' \
-        --true-echo-newline "true" \
+        --true-echo-newline \
         --true-command "$python_package_true_command" \
         --false-print-before "" \
         --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
-        --exit-if-false "false"
+        --false-command ""
 }
 
 function install_requirements_macos {
@@ -343,13 +342,12 @@ function install_requirements_macos {
         --check-command "xcode-select -p" \
         --true-print-before $'Xcode Command Line Tools are installed! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$xcode_false_before" \
         --false-print-after "$xcode_false_after" \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "xcode-select --install" \
-        --exit-if-false "true"
+        --exit-if-false
     
     # Installs homebrew if it does not already exist or updates it if it does
     homebrew_true_before=$'Homebrew is installed! ✅\n\nUpdating homebrew and its packages... '
@@ -362,13 +360,11 @@ function install_requirements_macos {
         --check-command "brew help" \
         --true-print-before "$homebrew_true_before" \
         --true-print-after $'Homebrew is updated! ✅\n\n' \
-        --true-echo-newline "true" \
+        --true-echo-newline \
         --true-command "brew update && brew upgrade && brew cleanup --prune=all -s" \
         --false-print-before "$homebrew_false_before" \
         --false-print-after $'\nHomebrew is installed! ✅\n\n' \
-        --false-echo-newline "false" \
         --false-command "$homebrew_false_command" \
-        --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
     bash_login_filename=".bash_profile"
@@ -438,13 +434,11 @@ function install_requirements_macos {
         --check-command "grep -q \"\$(brew --prefix)/bin/bash\" /etc/shells" \
         --true-print-before $'The updated bash is in the list of Terminal shells! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$bash_false_before" \
         --false-print-after "$bash_false_after" \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
-        --exit-if-false "false"
     
     # If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash
     # is the default
@@ -459,13 +453,11 @@ function install_requirements_macos {
         --check-command "[[ \${BASH_VERSION%%.*} -gt 4 ]]" \
         --true-print-before $'Your bash version is up to date in your current shell! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$bash_version_false_before" \
         --false-print-after "$bash_version_false_after" \
-        --false-echo-newline "false" \
         --false-command "$bash_version_false_command" \
-        --exit-if-false "true"
+        --exit-if-false
     
     # Installs git through homebrew if not already installed
     run_homebrew_install "git" "🐙"
@@ -499,13 +491,11 @@ function install_requirements_linux_wsl {
         --check-command "true" \
         --true-print-before $'Ensuring apt packages are up to date... 📦\n\n' \
         --true-print-after $'Apt packages are up to date! ✅\n\n' \
-        --true-echo-newline "true" \
+        --true-echo-newline \
         --true-command "sudo apt update -y && sudo apt upgrade -y" \
         --false-print-before "" \
         --false-print-after "" \
-        --false-echo-newline "false" \
         --false-command "" \
-        --exit-if-false "false"
     
     # Installs script dependencies if they are not already installed
     script_dependencies="build-essential bash procps curl file git"
@@ -520,13 +510,11 @@ function install_requirements_linux_wsl {
         --check-command "$script_dependencies_check_command" \
         --true-print-before $'Script dependencies are installed! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$script_dependencies_false_before" \
         --false-print-after $'Script dependencies have been installed! ✅\n\n' \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "sudo apt install $script_dependencies -y" \
-        --exit-if-false "false"
     
     # Installs gh if it is not already installed
     gh_keyring_path="/usr/share/keyrings/githubcli-archive-keyring.gpg"
@@ -542,13 +530,11 @@ function install_requirements_linux_wsl {
         --check-command "command -v gh" \
         --true-print-before $'gh is installed! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before $'gh is not installed. ❌\n\nInstalling gh... 🐙\n\n' \
         --false-print-after $'gh has been installed! ✅\n\n' \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "$gh_install_false_command" \
-        --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
     bash_login_filename=".bashrc"
@@ -571,13 +557,11 @@ function install_requirements_linux_wsl {
         --check-command "$local_bin_check_command" \
         --true-print-before $'Your local bin is already in your path! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$local_bin_false_before" \
         --false-print-after "$local_bin_false_after" \
-        --false-echo-newline "false" \
         --false-command "$local_bin_false_command" \
-        --exit-if-false "true"
+        --exit-if-false
     
     # Uninstalls Anaconda if it is installed
     uninstall_anaconda
@@ -589,13 +573,11 @@ function install_requirements_linux_wsl {
         --check-command "dpkg -s python3 && dpkg -s python3-pip" \
         --true-print-before $'python3 and pip3 are installed. ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$python3_false_before" \
         --false-print-after $'python3 and pip3 have been installed! ✅\n\n' \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "sudo apt install python3 python3-pip -y" \
-        --exit-if-false "false"
     
     # Upgrades pip if not already up to date
     upgrade_pip
@@ -612,26 +594,22 @@ function install_requirements_linux_wsl {
         --check-command "$gdal_repository_check_command" \
         --true-print-before $'The apt repository for GDAL is added! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before "$gdal_repository_false_before" \
         --false-print-after "The apt repository for GDAL has been added! ✅\n\n" \
-        --false-echo-newline "true" \
+        --false-echo-newline \
         --false-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
-        --exit-if-false "false"
     
     # Installs GDAL through apt if not already installed
     run_command_conditional \
         --check-command "dpkg -s gdal-bin && dpkg -s libgdal-dev && dpkg -s python3-gdal" \
         --true-print-before $'GDAL is installed! ✅\n\n' \
         --true-print-after "" \
-        --true-echo-newline "false" \
         --true-command "" \
         --false-print-before $'GDAL is not installed. ❌\n\nInstalling GDAL... 🌎\n\n' \
         --false-print-after $'GDAL has been installed! ✅\n\n' \
-        --false-echo-newline "false" \
         --false-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
-        --exit-if-false "true"
+        --exit-if-false
     
     # Installs or updates the required Python packages
     install_required_python_packages
