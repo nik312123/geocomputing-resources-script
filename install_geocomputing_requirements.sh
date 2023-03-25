@@ -252,7 +252,7 @@ function uninstall_anaconda {
     done
     anaconda_true_command+="}; true"
     run_command_conditional \
-        --check-command "which conda || command -v anaconda" \
+        --check-command "command -v conda || command -v anaconda" \
         --true-print-before $'Anaconda is installed. ❌\n\nUninstalling Anaconda... 🗑\n\n' \
         --true-print-after $'Anaconda is uninstalled. ✅\n\n' \
         --true-echo-newline "true" \
@@ -549,7 +549,7 @@ function install_requirements_linux_wsl {
     python3_false_before=$'python3 and pip3 are not installed. ❌\n\n'
     python3_false_before+=$'Installing python3 and pip3... 🐍\n\n'
     run_command_conditional \
-        --check-command "which python3 && which pip3" \
+        --check-command "command -v python3 && command -v pip3" \
         --true-print-before $'python3 and pip3 are already installed. ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
