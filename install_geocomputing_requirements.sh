@@ -192,46 +192,46 @@ function create_bash_login_files {
     zsh_login_filename="$2"
     
     # If the bash login file does not exist, create it!
-        bash_login_false_before="${HOME}/${bash_login_filename}"$' could not be found. Creating it '
+        bash_login_false_before="$HOME/$bash_login_filename"$' could not be found. Creating it '
         bash_login_false_before+=$'for you... 📝\n\n'
         run_command_conditional \
-            --check-command "test -f \"${HOME}/${bash_login_filename}\"" \
+            --check-command "test -f \"$HOME/$bash_login_filename\"" \
             --true-print-before "" \
             --true-print-after "" \
             --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$bash_login_false_before" \
-            --false-print-after "${HOME}/${bash_login_filename}"$' created!\n\n' \
+            --false-print-after "$HOME/$bash_login_filename"$' created!\n\n' \
             --false-echo-newline "false" \
-            --false-command "touch \"${HOME}/${bash_login_filename}\"" \
+            --false-command "touch \"$HOME/$bash_login_filename\"" \
             --exit-if-false "false"
         
         # If the zsh login file does not exist, create it!
-        zsh_login_false_before="${HOME}/${zsh_login_filename}"$' could not be found. Creating it '
+        zsh_login_false_before="$HOME/$zsh_login_filename"$' could not be found. Creating it '
         zsh_login_false_before+=$'for you... 📝\n\n'
         run_command_conditional \
-            --check-command "test -f \"${HOME}/${zsh_login_filename}\"" \
+            --check-command "test -f \"$HOME/$zsh_login_filename\"" \
             --true-print-before "" \
             --true-print-after "" \
             --true-echo-newline "false" \
             --true-command "" \
             --false-print-before "$zsh_login_false_before" \
-            --false-print-after "${HOME}/${zsh_login_filename}"$' created!\n\n' \
+            --false-print-after "$HOME/$zsh_login_filename"$' created!\n\n' \
             --false-echo-newline "false" \
-            --false-command "touch \"${HOME}/${zsh_login_filename}\"" \
+            --false-command "touch \"$HOME/$zsh_login_filename\"" \
             --exit-if-false "false"
 }
 
 # Uninstalls Anaconda if it is installed
 function uninstall_anaconda {
     anaconda_paths=(
-        "${HOME}/.conda"
-        "${HOME}/.condarc"
-        "${HOME}/.continuum"
-        "${HOME}/.anaconda_backup"
-        "${HOME}/anaconda*"
-        "${HOME}/.spyder*"
-        "${HOME}/opt/anaconda*"
+        "$HOME/.conda"
+        "$HOME/.condarc"
+        "$HOME/.continuum"
+        "$HOME/.anaconda_backup"
+        "$HOME/anaconda*"
+        "$HOME/.spyder*"
+        "$HOME/opt/anaconda*"
         "/Applications/Anaconda-Navigator.app"
         "/usr/local/anaconda*"
         "/opt/anaconda*"
@@ -239,8 +239,8 @@ function uninstall_anaconda {
         "/usr/local/bin/conda*"
         "/usr/bin/anaconda*"
         "/usr/bin/conda*"
-        "${HOME}/bin/anaconda*"
-        "${HOME}/bin/conda*"
+        "$HOME/bin/anaconda*"
+        "$HOME/bin/conda*"
         "/usr/share/applications/anaconda-navigator.desktop"
         "/usr/share/applications/anaconda.desktop"
         "/usr/share/icons/hicolor/*/apps/anaconda.png"
@@ -290,15 +290,15 @@ function alias_python3_and_pip {
         user_profile="$bash_login_filename"
     fi
     
-    python_check="grep -q 'alias python=\"python3\"' \"${HOME}/${user_profile}\" && "
-    python_check+="grep -q 'alias pip=\"python3 -m pip\"' \"${HOME}/${user_profile}\""
+    python_check="grep -q 'alias python=\"python3\"' \"$HOME/$user_profile\" && "
+    python_check+="grep -q 'alias pip=\"python3 -m pip\"' \"$HOME/$user_profile\""
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
     python_alias_false_command="printf '\nalias python=\"python3\"\n' >> "
-    python_alias_false_command+="${HOME}/${bash_login_filename} && printf 'alias pip=\"python3 -m "
-    python_alias_false_command+="pip\"\n' >> ${HOME}/${bash_login_filename} && printf '\nalias "
-    python_alias_false_command+="python=\"python3\"\n' >> ${HOME}/${zsh_login_filename} && printf "
-    python_alias_false_command+="'alias pip=\"python3 -m pip\"\n' >> ${HOME}/${zsh_login_filename}"
+    python_alias_false_command+="$HOME/$bash_login_filename && printf 'alias pip=\"python3 -m "
+    python_alias_false_command+="pip\"\n' >> $HOME/$bash_login_filename && printf '\nalias "
+    python_alias_false_command+="python=\"python3\"\n' >> $HOME/$zsh_login_filename && printf "
+    python_alias_false_command+="'alias pip=\"python3 -m pip\"\n' >> $HOME/$zsh_login_filename"
     run_command_conditional \
         --check-command "$python_check" \
         --true-print-before $'pip and python are properly aliased. ✅\n\n' \
@@ -408,12 +408,12 @@ function install_requirements_macos {
         
         # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash
         # login file and spits an error if it fails
-        load_brew_bash="printf \"%s\" \"\$load_homebrew_string\" >> ${HOME}/${bash_login_filename}"
+        load_brew_bash="printf \"%s\" \"\$load_homebrew_string\" >> $HOME/$bash_login_filename"
         try_running_command "$load_brew_bash" "false"
         
         # Adds Homebrew's binary directory to the beginning of your $PATH variable in your zsh login
         # file and spits an error if it fails
-        load_brew_zsh="printf \"%s\" \"\$load_homebrew_string\" >> ${HOME}/${zsh_login_filename}"
+        load_brew_zsh="printf \"%s\" \"\$load_homebrew_string\" >> $HOME/$zsh_login_filename"
         try_running_command "$load_brew_zsh" "false"
         
         printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
@@ -520,16 +520,16 @@ function install_requirements_linux_wsl {
     
     # Adds your local bin to your path if it is not already in your path
     local_bin_check_command="grep -q 'export PATH=\"\$HOME/.local/bin:\$PATH\"' "
-    local_bin_check_command+="\"${HOME}/${bash_login_filename}\""
+    local_bin_check_command+="\"$HOME/$bash_login_filename\""
     local_bin_false_before=$'Your local bin is not in your path. ❌\n\n'
     local_bin_false_before+=$'Adding your local bin to your path... 📂\n\n'
     local_bin_false_after=$'Your local bin is now in your path! ✅\n\nNow, please restart your '
     local_bin_false_after+=$'Terminal to load your local bin properly into your $PATH and run this '
     local_bin_false_after+=$'script again.\n\n'
     local_bin_false_command="printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
-    local_bin_false_command+=" >> ${HOME}/${bash_login_filename}"
+    local_bin_false_command+=" >> $HOME/$bash_login_filename"
     local_bin_false_command+=" && printf \"\\nexport PATH=\\\"\\\$HOME/.local/bin:\\\$PATH\\\"\\n\""
-    local_bin_false_command+=" >> ${HOME}/${zsh_login_filename}"
+    local_bin_false_command+=" >> $HOME/$zsh_login_filename"
     run_command_conditional \
         --check-command "$local_bin_check_command" \
         --true-print-before $'Your local bin is already in your path! ✅\n\n' \
