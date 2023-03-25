@@ -221,23 +221,25 @@ else
 fi
 
 # Gets the user's GitHub email
-github_email_command="read -rp \"Enter the email associated with your GitHub account: \" "
-github_email_command+="github_email"
-
-if $echo_on; then
-    printf "> $%s\n\n" "$github_email_command"
-fi
-
-if ! read -rp "Enter the email associated with your GitHub account: " github_email; then
-    print_error_and_exit "$github_email_command"
-fi
-printf "\n"
-
-# Basic check to see if the email is valid (Source: https://www.regular-expressions.info/email.html)
-basic_email_regex='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-if ! [[ $github_email =~ $basic_email_regex ]]; then
-    printf "Please provide a valid email address.\n\n"
-    exit 1
+if ! [[ -f "$HOME/.ssh/id_nik312123_github_rsa" ]]; then
+    github_email_command="read -rp \"Enter the email associated with your GitHub account: \" "
+    github_email_command+="github_email"
+    
+    if $echo_on; then
+        printf "> $%s\n\n" "$github_email_command"
+    fi
+    
+    if ! read -rp "Enter the email associated with your GitHub account: " github_email; then
+        print_error_and_exit "$github_email_command"
+    fi
+    printf "\n"
+    
+    # Basic check to see if the email is valid (Source: https://www.regular-expressions.info/email.html)
+    basic_email_regex='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if ! [[ $github_email =~ $basic_email_regex ]]; then
+        printf "Please provide a valid email address.\n\n"
+        exit 1
+    fi
 fi
 
 # Check if the user has the ssh key id_nik312123_github_rsa in their ssh folder and if not, generate
