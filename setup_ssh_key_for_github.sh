@@ -310,9 +310,9 @@ add_start_ssh_agent_false_after+=$'Now, please restart your Terminal to use the 
 add_start_ssh_agent_false_after+=$'run this script again.\n\n'
 add_start_ssh_agent_false_before=$'SSH agent is not running. ❌\n\n'
 add_start_ssh_agent_false_before+=$'Adding code to start SSH agent in login files... 📝\n\n'
-add_start_ssh_agent_false_command="printf '\neval \"\$(ssh-agent -s)\"\n' >> "
+add_start_ssh_agent_false_command="printf '\neval \"\$(ssh-agent -s)\" >/dev/null\n' >> "
 add_start_ssh_agent_false_command+="$HOME/$bash_login_filename && printf "
-add_start_ssh_agent_false_command+="'\neval \"\$(ssh-agent -s)\"\n' >> $HOME/$zsh_login_filename"
+add_start_ssh_agent_false_command+="'\neval \"\$(ssh-agent -s)\" >/dev/null\n' >> $HOME/$zsh_login_filename"
 run_command_conditional \
     --check-command "ps aux | grep \"ssh-agent\" | grep -v grep" \
     --true-print-before $'SSH agent is already running! ✅\n\n' \
