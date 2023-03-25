@@ -647,7 +647,7 @@ else
 fi
 
 # Gets the operating system type
-os_type=$(uname -s)
+os_type="$(uname -s)"
 
 # Checks if the operating system is supported and runs the appropriate installation function
 if [ "$os_type" == "Darwin" ]; then
