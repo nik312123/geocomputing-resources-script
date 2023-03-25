@@ -501,16 +501,25 @@ function install_requirements_linux_wsl {
         --false-command "" \
         --exit-if-false "false"
     
+    # Installs script dependencies if they are not already installed
+    script_dependencies="build-essential bash procps curl file git"
+    script_dependencies_check_command=""
+    for dependency in $script_dependencies; do
+        script_dependencies_check_command+="dpkg -s $dependency && "
+    done
+    script_dependencies_check_command=${dependencies_check_command% && }
+    script_dependencies_false_before=$'Script dependencies are not installed. ❌\n\n'
+    script_dependencies_false_before+=$'Installing script dependencies... 🧱\n\n'
     run_command_conditional \
-        --check-command "true" \
-        --true-print-before $'Installing script dependencies... 🧱\n\n' \
-        --true-print-after $'Script dependencies have been installed! ✅\n\n' \
-        --true-echo-newline "true" \
-        --true-command "sudo apt install build-essential bash procps curl file git -y" \
-        --false-print-before "" \
-        --false-print-after "" \
-        --false-echo-newline "false" \
-        --false-command "" \
+        --check-command "$script_dependencies_check_command" \
+        --true-print-before $'Script dependencies are installed! ✅\n\n' \
+        --true-print-after "" \
+        --true-echo-newline "false" \
+        --true-command "" \
+        --false-print-before "$script_dependencies_false_before" \
+        --false-print-after $'Script dependencies have been installed! ✅\n\n' \
+        --false-echo-newline "true" \
+        --false-command "sudo apt install $script_dependencies -y" \
         --exit-if-false "false"
     
     # Creates the bash and zsh login files if they do not exist
@@ -549,7 +558,7 @@ function install_requirements_linux_wsl {
     python3_false_before=$'python3 and pip3 are not installed. ❌\n\n'
     python3_false_before+=$'Installing python3 and pip3... 🐍\n\n'
     run_command_conditional \
-        --check-command "command -v python3 && command -v pip3" \
+        --check-command "dpkg -s python3 && dpkg -s python3-pip" \
         --true-print-before $'python3 and pip3 are already installed. ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
@@ -581,7 +590,7 @@ function install_requirements_linux_wsl {
     
     # Installs GDAL through apt if not already installed
     run_command_conditional \
-        --check-command "true" \
+        --check-command "dpkg -s gdal-bin && dpkg -s libgdal-dev && dpkg -s python3-gdal" \
         --true-print-before $'Installing GDAL... 🌎\n\n' \
         --true-print-after $'GDAL has been installed! ✅\n\n' \
         --true-echo-newline "true" \
