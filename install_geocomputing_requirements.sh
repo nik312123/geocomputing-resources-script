@@ -290,8 +290,8 @@ function alias_python3_and_pip {
         user_profile="$bash_login_filename"
     fi
     
-    python_check="grep -q 'alias python=\"python3\"' \"$HOME/$user_profile\" && "
-    python_check+="grep -q 'alias pip=\"python3 -m pip\"' \"$HOME/$user_profile\""
+    python_check_command="grep -q 'alias python=\"python3\"' \"$HOME/$user_profile\" && "
+    python_check_command+="grep -q 'alias pip=\"python3 -m pip\"' \"$HOME/$user_profile\""
     python_alias_false_before=$'pip and python are not properly aliased. ❌\n\nAliasing pip and '
     python_alias_false_before+=$'python... 🔗\n\n'
     python_alias_false_command="printf '\nalias python=\"python3\"\n' >> "
@@ -300,7 +300,7 @@ function alias_python3_and_pip {
     python_alias_false_command+="python=\"python3\"\n' >> $HOME/$zsh_login_filename && printf "
     python_alias_false_command+="'alias pip=\"python3 -m pip\"\n' >> $HOME/$zsh_login_filename"
     run_command_conditional \
-        --check-command "$python_check" \
+        --check-command "$python_check_command" \
         --true-print-before $'pip and python are properly aliased. ✅\n\n' \
         --true-print-after "" \
         --true-echo-newline "false" \
