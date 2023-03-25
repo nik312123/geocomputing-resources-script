@@ -434,6 +434,7 @@ function install_requirements_macos {
             printf "\\\\\" shellenv)\\\\\"\\\\\\\n\" \"\$brew_prefix\"\n\n"
         fi
         
+        # shellcheck disable=SC2034
         printf -v load_homebrew_string "\\neval \"\$(\"%s/bin/brew\" shellenv)\"\\n" "$brew_prefix"
         
         # Adds Homebrew's binary directory to the beginning of your $PATH variable in your bash
