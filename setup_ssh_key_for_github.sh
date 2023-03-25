@@ -52,7 +52,7 @@ function raise_parameter_provided_more_than_once_error {
 
 # Raises an error if the given required parameter is provided more than once
 # Takes in the array, index, and name of the parameter
-function raise_error_if_index_set {
+function raise_error_if_idx_set {
     declare -a arr=("${!1}")
     
     if [ "${arr[$2]}" -eq 1 ]; then
@@ -91,21 +91,21 @@ function run_command_conditional {
         case "${1}" in
             --check-command)
                 param_idx=0
-                raise_error_if_index_set required_params_provided[@] $param_idx "--check-command"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--check-command"
                 required_params_provided[param_idx]=1
                 check_command="${2}"
                 shift
                 ;;
             --true-print-before)
                 param_idx=1
-                raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-before"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--true-print-before"
                 required_params_provided[param_idx]=1
                 true_print_before="${2}"
                 shift
                 ;;
             --true-print-after)
                 param_idx=2
-                raise_error_if_index_set required_params_provided[@] $param_idx "--true-print-after"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--true-print-after"
                 required_params_provided[param_idx]=1
                 true_print_after="${2}"
                 shift
@@ -118,28 +118,28 @@ function run_command_conditional {
                 ;;
             --true-command)
                 param_idx=3
-                raise_error_if_index_set required_params_provided[@] $param_idx "--true-command"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--true-command"
                 required_params_provided[param_idx]=1
                 true_command="${2}"
                 shift
                 ;;
             --false-print-before)
                 param_idx=4
-                raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-before"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--false-print-before"
                 required_params_provided[param_idx]=1
                 false_print_before="${2}"
                 shift
                 ;;
             --false-print-after)
                 param_idx=5
-                raise_error_if_index_set required_params_provided[@] $param_idx "--false-print-after"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--false-print-after"
                 required_params_provided[param_idx]=1
                 false_print_after="${2}"
                 shift
                 ;;
             --false-command)
                 param_idx=6
-                raise_error_if_index_set required_params_provided[@] $param_idx "--false-command"
+                raise_error_if_idx_set required_params_provided[@] $param_idx "--false-command"
                 required_params_provided[param_idx]=1
                 false_command="${2}"
                 shift
@@ -283,7 +283,8 @@ if ! [[ -f "$HOME/.ssh/id_nik312123_github_rsa" ]]; then
     fi
     printf "\n"
     
-    # Basic check to see if the email is valid (Source: https://www.regular-expressions.info/email.html)
+    # Basic check to see if the email is valid
+    # Source: https://www.regular-expressions.info/email.html
     basic_email_regex='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if ! [[ $github_email =~ $basic_email_regex ]]; then
         printf "Please provide a valid email address.\n\n"
