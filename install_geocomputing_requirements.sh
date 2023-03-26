@@ -531,7 +531,7 @@ root_check
 
 # Sets up file descriptors 3 and 4 for the script, depending on whether or not the "-v" flag was
 # passed
-fd_setup
+fd_setup "$@"
 
 # Gets the operating system type
 os_type="$(uname -s)"
