@@ -448,7 +448,7 @@ function install_requirements_linux_wsl {
         --true-print-after "" \
         --true-command "" \
         --false-print-before "$gdal_repository_false_before" \
-        --false-print-after "The apt repository for GDAL has been added! ✅\n\n" \
+        --false-print-after $'The apt repository for GDAL has been added! ✅\n\n' \
         --false-echo-newline \
         --false-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
     
