@@ -8,12 +8,14 @@ script_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 # Load the installation helper script and its functions
 installation_common_load_succeeded=true
 if [[ -r "$script_directory/installation_common.sh" ]]; then
+    #shellcheck disable=SC1091
     if ! source "$script_directory/installation_common.sh"; then
         installation_common_load_succeeded=false
     fi
 else
     installation_common_url="https://raw.githubusercontent.com/nik312123/"
     installation_common_url+="geocomputing-resources-script/master/installation_common.sh"
+    #shellcheck disable=SC1090
     if ! source <(curl -fsL "$installation_common_url" 2>&1 || echo "false"); then
         installation_common_load_succeeded=false
     fi
@@ -55,6 +57,7 @@ if ! [[ -f "$HOME/.ssh/id_nik312123_github_rsa" ]]; then
     github_email_command="read -rp \"Enter the email associated with your GitHub account: \" "
     github_email_command+="github_email"
     
+    #shellcheck disable=SC2154
     if $echo_on; then
         printf "> $%s\n\n" "$github_email_command"
     fi
