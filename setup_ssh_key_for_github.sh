@@ -29,8 +29,12 @@ fi
 
 declare -g echo_on
 
+# Prevents the user from executing this script as root as some elements of the script do not play
+# well with root
 root_check
 
+# Sets up file descriptors 3 and 4 for the script, depending on whether or not the "-v" flag was
+# passed
 fd_setup
 
 # Gets the operating system type
