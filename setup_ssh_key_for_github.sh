@@ -12,8 +12,8 @@ if [[ -r "$script_directory/installation_common.sh" ]]; then
         installation_common_load_succeeded=false
     fi
 else
-    installation_common_url="https://raw.githubusercontent.com/nik312123/geocomputing/master/"
-    installation_common_url+="installation_common.sh"
+    installation_common_url="https://raw.githubusercontent.com/nik312123/"
+    installation_common_url+="geocomputing-resources-script/master/installation_common.sh"
     if ! source <(curl -fsSL "$installation_common_url"); then
         installation_common_load_succeeded=false
     fi
