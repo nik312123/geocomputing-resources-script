@@ -464,6 +464,18 @@ function install_requirements_linux_wsl {
     
     # Installs or updates the required Python packages
     install_required_python_packages
+    
+    # Retrieves the Windows username
+    windows_username_command='windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '
+    windows_username_command+=''\''\r'\'' 2>/dev/null)"'
+    if $echo_on; then
+        printf "> $windows_username_command\n\n"
+    fi
+    
+    windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r' 2>/dev/null)"
+    if [[ "$?" -ne 0 ]] || [[ "$windows_username" == "" ]]; then
+        print_error_and_exit "$windows_username_command"
+    fi
 }
 
 declare -g echo_on
