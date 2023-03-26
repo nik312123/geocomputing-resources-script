@@ -218,45 +218,57 @@ function run_command_conditional {
 }
 
 # Prevents the user from executing this script as root as homebrew does not play well with root
-if [ "$(whoami)" == "root" ]; then
-    printf "This script cannot be run as root. "
-    printf "Please try again as the local user or without running commands such as sudo.\n\n"
-    exit 1
-fi
-
-# If there are more than 1 command-line arguments entered, exit the script
-if [ "$#" -gt 1 ]; then
-    printf "This script only supports up to one command-line argument.\n\n"
-    exit 1
-# Otherwise, if one command-line argument was entered, throw an error if it is not "-v" and enable
-# echoing/verbose mode otherwise
-elif [ "$#" -eq 1 ]; then
-    if [ "$1" != "-v" ]; then
-        printf "The only command line argument accepted is the '-v' flag for verbose mode.\n\n"
+function root_check {
+    if [ "$(whoami)" == "root" ]; then
+        printf "This script cannot be run as root. "
+        printf "Please try again as the local user or without running commands such as sudo.\n\n"
         exit 1
     fi
-    
-    # File descriptor 3 is used to redirect stdout to stdout in this case and 4 to redirect stderr
-    # to stderr
-    if ! exec 3>&1; then
-        print_error_and_exit "exec 3>&1"
+}
+
+# Sets up file descriptors 3 and 4 for the script, depending on whether or not the "-v" flag was
+# passed
+function fd_setup {
+    # If there are more than 1 command-line arguments entered, exit the script
+    if [ "$#" -gt 1 ]; then
+        printf "This script only supports up to one command-line argument.\n\n"
+        exit 1
+    # Otherwise, if one command-line argument was entered, throw an error if it is not "-v" and enable
+    # echoing/verbose mode otherwise
+    elif [ "$#" -eq 1 ]; then
+        if [ "$1" != "-v" ]; then
+            printf "The only command line argument accepted is the '-v' flag for verbose mode.\n\n"
+            exit 1
+        fi
+        
+        # File descriptor 3 is used to redirect stdout to stdout in this case and 4 to redirect stderr
+        # to stderr
+        if ! exec 3>&1; then
+            print_error_and_exit "exec 3>&1"
+        fi
+        if ! exec 4>&2; then
+            print_error_and_exit "exec 4>&2"
+        fi
+        echo_on=true
+    # If no command-line arguments were entered, don't enable echoing
+    else
+        # File descriptor 3 is used to redirect stdout to /dev/null in this case and 4 to redirect
+        # stderr to /dev/null
+        if ! exec 3>/dev/null; then
+            print_error_and_exit "exec 3>/dev/null"
+        fi
+        if ! exec 4>&3; then
+            print_error_and_exit "exec 4>&3"
+        fi
+        echo_on=false
     fi
-    if ! exec 4>&2; then
-        print_error_and_exit "exec 4>&2"
-    fi
-    echo_on=true
-# If no command-line arguments were entered, don't enable echoing
-else
-    # File descriptor 3 is used to redirect stdout to /dev/null in this case and 4 to redirect
-    # stderr to /dev/null
-    if ! exec 3>/dev/null; then
-        print_error_and_exit "exec 3>/dev/null"
-    fi
-    if ! exec 4>&3; then
-        print_error_and_exit "exec 4>&3"
-    fi
-    echo_on=false
-fi
+}
+
+declare -g echo_on
+
+root_check
+
+fd_setup
 
 # Gets the operating system type
 os_type="$(uname -s)"
