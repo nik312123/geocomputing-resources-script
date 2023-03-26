@@ -13,14 +13,15 @@ function print_error_and_exit {
 
 # Tries to run a command and exits the script if it fails
 function try_running_command {
-    command="$1"
-    add_newline_after_command="$2"
-    run_without_redirecting_output="$3"
+    local command="$1"
+    local add_newline_after_command="$2"
+    local run_without_redirecting_output="$3"
     
     if $echo_on; then
         printf "> %s\n\n" "$command"
     fi
     
+    local command_execution_status
     if [[ "$run_without_redirecting_output" == "true" ]]; then
         eval "$command"
         command_execution_status="$?"
@@ -33,6 +34,7 @@ function try_running_command {
         print_error_and_exit "$command"
     fi
     
+    local display_output
     if $echo_on || [[ "$run_without_redirecting_output" == "true" ]]; then
         display_output=true
     else
@@ -87,7 +89,9 @@ function run_command_conditional {
     # Parses the parameter arguments
     # Based on https://stackoverflow.com/a/12128447
     while [[ ${1} ]]; do
-        previous_argument="$1"
+        local previous_argument="$1"
+        local param_idx
+        
         case "${1}" in
             --check-command)
                 param_idx=0
