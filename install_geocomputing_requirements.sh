@@ -501,19 +501,21 @@ function install_requirements_linux_wsl {
         --false-command "mkdir /mnt/c/Users/$windows_username/git"
     
     # Adds symbolic links to common Windows directories if they do not already exist
-    windows_directories=("Home" "Desktop" "Documents" "Downloads" "git")
+    windows_symlink_names=("Home" "Desktop" "Documents" "Downloads" "git")
+    windows_symlink_dirs=("" "/Desktop" "/Documents" "/Downloads" "/git")
     windows_symlinks_check_command=""
-    for directory in "${windows_directories[@]}"; do
-        windows_symlinks_check_command+="test -h \"$HOME/$directory\" && "
-        windows_symlinks_check_command+="test -e \"$HOME/$directory\" && "
+    for symlink_name in "${windows_symlink_names[@]}"; do
+        windows_symlinks_check_command+="test -h \"$HOME/$symlink_name\" && "
+        windows_symlinks_check_command+="test -e \"$HOME/$symlink_name\" && "
     done
     windows_symlinks_check_command=${windows_symlinks_check_command% && }
     windows_symlinks_false_before=$'The symlinks to common Windows directories do not exist. ❌\n\n'
     windows_symlinks_false_before+=$'Adding symlinks to common Windows directories... 🔗\n\n'
     windows_symlinks_false_command=""
-    for directory in "${windows_directories[@]}"; do
-        windows_symlinks_false_command+="{ test -h \"$HOME/$directory\" || ln -s "
-        windows_symlinks_false_command+="/mnt/c/Users/$windows_username/$directory $HOME/; } && "
+    for i in "${!windows_symlink_names[@]}"; do
+        windows_symlinks_false_command+="{ test -h \"$HOME/${windows_symlink_names[$i]}\" || ln -s "
+        windows_symlinks_false_command+="/mnt/c/Users/$windows_username${windows_symlink_dirs[$i]} "
+        windows_symlinks_false_command+="$HOME/}; } && "
     done
     windows_symlinks_false_command=${windows_symlinks_false_command% && }
     run_command_conditional \
