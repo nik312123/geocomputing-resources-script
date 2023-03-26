@@ -69,7 +69,7 @@ function create_bash_login_files {
             --true-command "" \
             --false-print-before "$bash_login_false_before" \
             --false-print-after "$HOME/$bash_login_filename"$' created!\n\n' \
-            --false-command "touch \"$HOME/$bash_login_filename\"" \
+            --false-command "touch \"$HOME/$bash_login_filename\""
         
         # If the zsh login file does not exist, create it!
         zsh_login_false_before="$HOME/$zsh_login_filename"$' could not be found. Creating it '
@@ -215,7 +215,7 @@ function install_requirements_macos {
         --true-command "brew update && brew upgrade && brew cleanup --prune=all -s" \
         --false-print-before "$homebrew_false_before" \
         --false-print-after $'\nHomebrew is installed! ✅\n\n' \
-        --false-command "$homebrew_false_command" \
+        --false-command "$homebrew_false_command"
     
     # Creates the bash and zsh login files if they do not exist
     bash_login_filename=".bash_profile"
@@ -290,7 +290,7 @@ function install_requirements_macos {
         --false-print-before "$bash_false_before" \
         --false-print-after "$bash_false_after" \
         --false-echo-newline \
-        --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'" \
+        --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'"
     
     # If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash
     # is the default
@@ -347,7 +347,7 @@ function install_requirements_linux_wsl {
         --true-command "sudo apt update -y && sudo apt upgrade -y" \
         --false-print-before "" \
         --false-print-after "" \
-        --false-command "" \
+        --false-command ""
     
     # Installs script dependencies if they are not already installed
     script_dependencies="build-essential bash procps curl file git"
@@ -366,7 +366,7 @@ function install_requirements_linux_wsl {
         --false-print-before "$script_dependencies_false_before" \
         --false-print-after $'Script dependencies have been installed! ✅\n\n' \
         --false-echo-newline \
-        --false-command "sudo apt install $script_dependencies -y" \
+        --false-command "sudo apt install $script_dependencies -y"
     
     # Installs gh if it is not already installed
     gh_keyring_path="/usr/share/keyrings/githubcli-archive-keyring.gpg"
@@ -386,7 +386,7 @@ function install_requirements_linux_wsl {
         --false-print-before $'gh is not installed. ❌\n\nInstalling gh... 🐙\n\n' \
         --false-print-after $'gh has been installed! ✅\n\n' \
         --false-echo-newline \
-        --false-command "$gh_install_false_command" \
+        --false-command "$gh_install_false_command"
     
     # Creates the bash and zsh login files if they do not exist
     bash_login_filename=".bashrc"
@@ -429,7 +429,7 @@ function install_requirements_linux_wsl {
         --false-print-before "$python3_false_before" \
         --false-print-after $'python3 and pip3 have been installed! ✅\n\n' \
         --false-echo-newline \
-        --false-command "sudo apt install python3 python3-pip -y" \
+        --false-command "sudo apt install python3 python3-pip -y"
     
     # Upgrades pip if not already up to date
     upgrade_pip
@@ -450,7 +450,7 @@ function install_requirements_linux_wsl {
         --false-print-before "$gdal_repository_false_before" \
         --false-print-after $'The apt repository for GDAL has been added! ✅\n\n' \
         --false-echo-newline \
-        --false-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y" \
+        --false-command "sudo add-apt-repository ppa:ubuntugis/ppa -y && sudo apt update -y"
     
     # Installs GDAL through apt if not already installed
     run_command_conditional \
