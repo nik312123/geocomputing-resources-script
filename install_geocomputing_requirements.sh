@@ -222,6 +222,18 @@ function install_requirements_macos {
     zsh_login_filename=".zprofile"
     create_bash_login_files "$bash_login_filename" "$zsh_login_filename"
     
+    # Creates the git directory if it does not already exist
+    git_directory_false_before=$'The git directory does not exist. ❌\n\n'
+    git_directory_false_before+=$'Creating the git directory... 📁\n\n'
+    run_command_conditional \
+        --check-command "test -d \"$HOME/git\"" \
+        --true-print-before $'The git directory exists! ✅\n\n' \
+        --true-print-after "" \
+        --true-command "" \
+        --false-print-before "$git_directory_false_before" \
+        --false-print-after $'The git directory has been created! ✅\n\n' \
+        --false-command "mkdir \"$HOME/git\""
+    
     # If Homebrew is installed, calculates the difference between the position of /usr/bin and
     # Homebrew's bin
     if brew help >/dev/null 2>&1; then
