@@ -85,7 +85,7 @@ function run_command_conditional {
     false_echo_newline="false"
     exit_if_false="false"
     force_display_output="false"
-        
+    
     # Parses the parameter arguments
     # Based on https://stackoverflow.com/a/12128447
     while [[ ${1} ]]; do
