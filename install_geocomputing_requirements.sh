@@ -514,8 +514,8 @@ function install_requirements_linux_wsl {
     windows_symlinks_false_command=""
     for i in "${!windows_symlink_names[@]}"; do
         windows_symlinks_false_command+="{ test -h \"$HOME/${windows_symlink_names[$i]}\" || ln -s "
-        windows_symlinks_false_command+="/mnt/c/Users/$windows_username${windows_symlink_dirs[$i]} "
-        windows_symlinks_false_command+="$HOME/}; } && "
+        windows_symlinks_false_command+="\"/mnt/c/Users/$windows_username${windows_symlink_dirs[$i]}\" "
+        windows_symlinks_false_command+="\"$HOME/\"}; } && "
     done
     windows_symlinks_false_command=${windows_symlinks_false_command% && }
     run_command_conditional \
