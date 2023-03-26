@@ -476,6 +476,18 @@ function install_requirements_linux_wsl {
     if [[ "$?" -ne 0 ]] || [[ "$windows_username" == "" ]]; then
         print_error_and_exit "$windows_username_command"
     fi
+    
+    # Create the git directory if it does not already exist
+    git_directory_false_before=$'The git directory does not exist. ❌\n\n'
+    git_directory_false_before+=$'Creating the git directory... 📁\n\n'
+    run_command_conditional \
+        --check-command "test -d /mnt/c/Users/$windows_username/git" \
+        --true-print-before $'The git directory exists! ✅\n\n' \
+        --true-print-after "" \
+        --true-command "" \
+        --false-print-before "$git_directory_false_before" \
+        --false-print-after $'The git directory has been created! ✅\n\n' \
+        --false-command "mkdir /mnt/c/Users/$windows_username/git"
 }
 
 declare -g echo_on
