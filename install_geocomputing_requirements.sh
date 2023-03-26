@@ -477,7 +477,7 @@ function install_requirements_linux_wsl {
         print_error_and_exit "$windows_username_command"
     fi
     
-    # Create the git directory if it does not already exist
+    # Creates the git directory if it does not already exist
     git_directory_false_before=$'The git directory does not exist. ❌\n\n'
     git_directory_false_before+=$'Creating the git directory... 📁\n\n'
     run_command_conditional \
@@ -488,6 +488,31 @@ function install_requirements_linux_wsl {
         --false-print-before "$git_directory_false_before" \
         --false-print-after $'The git directory has been created! ✅\n\n' \
         --false-command "mkdir /mnt/c/Users/$windows_username/git"
+    
+    # Adds symbolic links to common Windows directories if they do not already exist
+    windows_directories=("Home" "Desktop" "Documents" "Downloads" "git")
+    windows_symlinks_check_command=""
+    for directory in "${windows_directories[@]}"; do
+        windows_symlinks_check_command+="test -h \"$HOME/$directory\" && "
+        windows_symlinks_check_command+="test -e \"$HOME/$directory\" && "
+    done
+    windows_symlinks_check_command=${windows_symlinks_check_command% && }
+    windows_symlinks_false_before=$'The symlinks to common Windows directories do not exist. ❌\n\n'
+    windows_symlinks_false_before+=$'Adding symlinks to common Windows directories... 🔗\n\n'
+    windows_symlinks_false_command=""
+    for directory in "${windows_directories[@]}"; do
+        windows_symlinks_false_command+="{ test -h \"$HOME/$directory\" || ln -s "
+        windows_symlinks_false_command+="/mnt/c/Users/$windows_username/$directory $HOME/; } && "
+    done
+    windows_symlinks_false_command=${windows_symlinks_false_command% && }
+    run_command_conditional \
+        --check-command "$windows_symlinks_check_command" \
+        --true-print-before $'The symlinks to common Windows directories already exist! ✅\n\n' \
+        --true-print-after "" \
+        --true-command "" \
+        --false-print-before "$windows_symlinks_false_before" \
+        --false-print-after $'The symlinks to common Windows directories have been added! ✅\n\n' \
+        --false-command "$windows_symlinks_false_command"
 }
 
 declare -g echo_on
