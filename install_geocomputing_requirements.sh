@@ -29,10 +29,6 @@ fi
 
 declare -g echo_on
 
-root_check
-
-fd_setup
-
 # Installs a Homebrew package if it is not installed, and updates it if it is installed
 function run_homebrew_install {
     true_before=$'Homebrew\'s '"$1"$' is installed! ✅\n\nUpdating '"$1"$'... Please be patient. '
