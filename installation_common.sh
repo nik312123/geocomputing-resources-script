@@ -218,7 +218,8 @@ function run_command_conditional {
     fi
 }
 
-# Prevents the user from executing this script as root as homebrew does not play well with root
+# Prevents the user from executing this script as root as some elements of the script do not play
+# well with root
 function root_check {
     if [ "$(whoami)" == "root" ]; then
         printf "This script cannot be run as root. Please " >&2
