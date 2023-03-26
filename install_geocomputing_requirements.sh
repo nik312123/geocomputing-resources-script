@@ -460,8 +460,7 @@ function install_requirements_linux_wsl {
         --true-command "" \
         --false-print-before $'GDAL is not installed. ❌\n\nInstalling GDAL... 🌎\n\n' \
         --false-print-after $'GDAL has been installed! ✅\n\n' \
-        --false-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y" \
-        --exit-if-false
+        --false-command "sudo apt install gdal-bin libgdal-dev python3-gdal -y"
     
     # Installs or updates the required Python packages
     install_required_python_packages
