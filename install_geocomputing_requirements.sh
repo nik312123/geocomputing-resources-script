@@ -21,8 +21,9 @@ fi
 
 # If the installation helper script could not be loaded, exit the script
 if ! $installation_common_load_succeeded; then
-    printf "Could not load the installation helper script. Please ensure that either the file is in"
-    printf " the same directory as this script or that you have an internet connection.\n\n"
+    printf "Could not load the installation helper script. Please ensure that either the file " >&2
+    printf "is in the same directory as this script or that you have an internet connection." >&2
+    printf "\n\n" >&2
     exit 1
 fi
 
@@ -267,8 +268,8 @@ function install_requirements_macos {
         try_running_command "$load_brew_zsh" "false"
         
         printf "%s/bin/ is in your \$PATH! ✅\n\n" "$brew_prefix"
-        printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH and "
-        printf "run this script again.\n\n"
+        printf "Now, please restart your Terminal to load Homebrew properly into your \$PATH " >&2
+        printf "and run this script again.\n\n" >&2
         exit 1
     fi
     
@@ -516,7 +517,7 @@ if [ "$os_type" == "Darwin" ]; then
 elif [ "$os_type" == "Linux" ]; then
     install_requirements_linux_wsl
 else
-    printf "This script only supports macOS and Linux/WSL.\n\n"
+    printf "This script only supports macOS and Linux/WSL.\n\n" >&2
     exit 1
 fi
 

@@ -5,9 +5,9 @@
 
 # Prints an error message about running a command and exits the script
 function print_error_and_exit {
-    printf "\nAn error occurred in running the command: %s\n" "$1"
-    printf "Try restarting the Terminal and running the script again with the -v flag.\n"
-    printf "If the problem still occurs, contact tinyurl.com/nikunj-cs\n\n"
+    printf "\nAn error occurred in running the command: %s\n" "$1" >&2
+    printf "Try restarting the Terminal and running the script again with the -v flag.\n" >&2
+    printf "If the problem still occurs, contact tinyurl.com/nikunj-cs\n\n" >&2
     exit 1
 }
 
@@ -209,10 +209,11 @@ function run_command_conditional {
             try_running_command "$false_command" "$false_echo_newline" "$force_display_output"
         fi
         
-        printf "%s" "$false_print_after"
-        
         if [[ "$exit_if_false" == "true" ]]; then
+            printf "%s" "$false_print_after" >&2
             exit 1
+        else
+            printf "%s" "$false_print_after"
         fi
     fi
 }
@@ -220,8 +221,8 @@ function run_command_conditional {
 # Prevents the user from executing this script as root as homebrew does not play well with root
 function root_check {
     if [ "$(whoami)" == "root" ]; then
-        printf "This script cannot be run as root. "
-        printf "Please try again as the local user or without running commands such as sudo.\n\n"
+        printf "This script cannot be run as root. Please " >&2
+        printf "try again as the local user or without running commands such as sudo.\n\n" >&2
         exit 1
     fi
 }
@@ -231,13 +232,14 @@ function root_check {
 function fd_setup {
     # If there are more than 1 command-line arguments entered, exit the script
     if [ "$#" -gt 1 ]; then
-        printf "This script only supports up to one command-line argument.\n\n"
+        printf "This script only supports up to one command-line argument.\n\n" >&2
         exit 1
     # Otherwise, if one command-line argument was entered, throw an error if it is not "-v" and enable
     # echoing/verbose mode otherwise
     elif [ "$#" -eq 1 ]; then
         if [ "$1" != "-v" ]; then
-            printf "The only command line argument accepted is the '-v' flag for verbose mode.\n\n"
+            printf "The only command line argument accepted is the '-v' flag for verbose mode." >&2
+            printf "\n\n" >&2
             exit 1
         fi
         

@@ -21,8 +21,9 @@ fi
 
 # If the installation helper script could not be loaded, exit the script
 if ! $installation_common_load_succeeded; then
-    printf "Could not load the installation helper script. Please ensure that either the file is in"
-    printf " the same directory as this script or that you have an internet connection.\n\n"
+    printf "Could not load the installation helper script. Please ensure that either the file " >&2
+    printf "is in the same directory as this script or that you have an internet connection." >&2
+    printf "\n\n" >&2
     exit 1
 fi
 
@@ -43,7 +44,7 @@ elif [ "$os_type" == "Linux" ]; then
     bash_login_filename=".bashrc"
     zsh_login_filename=".zshrc"
 else
-    printf "This script only supports macOS and Linux/WSL.\n\n"
+    printf "This script only supports macOS and Linux/WSL.\n\n" >&2
     exit 1
 fi
 
@@ -65,7 +66,7 @@ if ! [[ -f "$HOME/.ssh/id_nik312123_github_rsa" ]]; then
     # Source: https://www.regular-expressions.info/email.html
     basic_email_regex='^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if ! [[ $github_email =~ $basic_email_regex ]]; then
-        printf "Please provide a valid email address.\n\n"
+        printf "Please provide a valid email address.\n\n" >&2
         exit 1
     fi
 fi
