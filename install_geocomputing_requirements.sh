@@ -27,8 +27,6 @@ if ! $installation_common_load_succeeded; then
     exit 1
 fi
 
-declare -g echo_on
-
 # Installs a Homebrew package if it is not installed, and updates it if it is installed
 function run_homebrew_install {
     true_before=$'Homebrew\'s '"$1"$' is installed! ✅\n\nUpdating '"$1"$'... Please be patient. '
@@ -522,8 +520,6 @@ function install_requirements_linux_wsl {
         --false-print-after $'The symlinks to common Windows directories have been added! ✅\n\n' \
         --false-command "$windows_symlinks_false_command"
 }
-
-declare -g echo_on
 
 # Prevents the user from executing this script as root as some elements of the script do not play
 # well with root

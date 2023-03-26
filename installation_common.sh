@@ -266,3 +266,5 @@ function fd_setup {
         echo_on=false
     fi
 }
+
+declare -g echo_on

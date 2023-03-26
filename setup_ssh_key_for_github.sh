@@ -27,8 +27,6 @@ if ! $installation_common_load_succeeded; then
     exit 1
 fi
 
-declare -g echo_on
-
 # Prevents the user from executing this script as root as some elements of the script do not play
 # well with root
 root_check
