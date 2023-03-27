@@ -6,19 +6,23 @@ The goal of this script is to install all software needed for geocomputing.
 
 Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
 
-To run the aforementioned installation script, you may run the following:
+To run the aforementioned installation script if you have bash 4 or higher, you may run the following:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geocomputing_requirements.sh" )
 ```
 
-To run the script in verbose mode (prints commands being run and their outputs) add the `-v` flag like so:
+To run the script in verbose mode (prints commands being run and their outputs) in bash 4 or higher, add the `-v` flag like so:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geocomputing_requirements.sh" ) -v
 ```
 
-You may also simply download the script and run it as follows:
+macOS unfortunately does not have bash 4 or higher by default (check your bash version by running `echo "$BASH_VERSION"` in Terminal). As such, if you do not have a high enough version of bash, you will need to either clone this repository to run the script locally or download the repository as a zip and run the script locally.
+
+To run this script locally, you may run the following:
+
+```bash
 
 ```bash
 # Normal
@@ -36,19 +40,21 @@ In fact, it will ensure that all of the installed components are up to date and 
 
 Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
 
-To run the aforementioned installation script, you may run the following:
+To run the aforementioned installation script on bash 4 or higher, you may run the following:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/setup_ssh_key_for_github.sh" )
 ```
 
-To run the script in verbose mode (prints commands being run and their outputs) add the `-v` flag like so:
+To run the script in verbose mode (prints commands being run and their outputs) on bash 4 or higher, add the `-v` flag like so:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/setup_ssh_key_for_github.sh" ) -v
 ```
 
-You may also simply download the script and run it as follows:
+macOS unfortunately does not have bash 4 or higher by default (check your bash version by running `echo "$BASH_VERSION"` in Terminal). As such, if you do not have a high enough version of bash, you will need to either clone this repository to run the script locally or download the repository as a zip and run the script locally.
+
+To run this script locally, you may run the following:
 
 ```bash
 # Normal

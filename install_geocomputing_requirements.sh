@@ -12,13 +12,18 @@ if [[ -r "$script_directory/installation_common.sh" ]]; then
     if ! source "$script_directory/installation_common.sh"; then
         installation_common_load_succeeded=false
     fi
-else
+elif [ "${BASH_VERSION%%.*}" -ge 4 ]; then
     installation_common_url="https://raw.githubusercontent.com/nik312123/"
     installation_common_url+="geocomputing-resources-script/master/installation_common.sh"
     #shellcheck disable=SC1090
     if ! source <(curl -fsL "$installation_common_url" 2>&1 || echo "false"); then
         installation_common_load_succeeded=false
     fi
+else
+    printf "Your bash version is too old to fully run this script without downloading the " >&2
+    printf "repository. ❌\n\nPlease download this repository by downloading it (green code " >&2
+    printf "button, then Download ZIP) or by another means.\n\n" >&2
+    exit 1
 fi
 
 # If the installation helper script could not be loaded, exit the script
