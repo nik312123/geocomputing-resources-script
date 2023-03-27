@@ -267,4 +267,4 @@ function fd_setup {
     fi
 }
 
-declare -g echo_on
+echo_on=false
