@@ -90,7 +90,7 @@ run_command_conditional \
     --true-print-after "" \
     --true-command "" \
     --false-print-before $'GitHub SSH key does not exist. ❌\n\nGenerating SSH key... 🗝️\n\n' \
-    --false-print-after $'GitHub SSH key has been created! ✅\n\n' \
+    --false-print-after $'\nGitHub SSH key has been created! ✅\n\n' \
     --false-command "$ssh_key_false_command"
 
 # Adds the ssh-agent startup command to the login files if it is not already there
