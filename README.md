@@ -20,6 +20,8 @@ bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-res
 
 macOS unfortunately does not have bash 4 or higher by default (check your bash version by running `echo "$BASH_VERSION"` in Terminal). As such, if you do not have a high enough version of bash, you will need to either clone this repository to run the script locally or download the repository as a zip and run the script locally.
 
+It would also be worth downloading the repository and running the script locally if you have a slow internet connection.
+
 To run this script locally, you may run the following:
 
 ```bash
@@ -53,6 +55,8 @@ bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-res
 ```
 
 macOS unfortunately does not have bash 4 or higher by default (check your bash version by running `echo "$BASH_VERSION"` in Terminal). As such, if you do not have a high enough version of bash, you will need to either clone this repository to run the script locally or download the repository as a zip and run the script locally.
+
+It would also be worth downloading the repository and running the script locally if you have a slow internet connection.
 
 To run this script locally, you may run the following:
 
