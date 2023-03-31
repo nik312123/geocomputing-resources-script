@@ -238,7 +238,7 @@ function fd_setup {
     # Otherwise, if one command-line argument was entered, throw an error if it is not "-v" and enable
     # echoing/verbose mode otherwise
     elif [ "$#" -eq 1 ]; then
-        if [ "$1" != "-v" ]; then
+        if [ "$1" != "-v" ] && [ "$1" != "--verbose" ]; then
             printf "The only command line argument accepted is the '-v' flag for verbose mode." >&2
             printf "\n\n" >&2
             exit 1
