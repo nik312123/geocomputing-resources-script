@@ -22,7 +22,7 @@ macOS unfortunately does not have bash 4 or higher by default (check your bash v
 
 It would also be worth downloading the repository and running the script locally if you have a slow internet connection.
 
-To run this script locally, you may run the following:
+To run this script locally, navigate into the unzipped or cloned repository using `cd geocomputing-resources-script`, and inside of it, you may run one of the following:
 
 ```bash
 # Normal
@@ -56,7 +56,7 @@ macOS unfortunately does not have bash 4 or higher by default (check your bash v
 
 It would also be worth downloading the repository and running the script locally if you have a slow internet connection.
 
-To run this script locally, you may run the following:
+To run this script locally, navigate into the unzipped or cloned repository using `cd geocomputing-resources-script`, and inside of it, you may run one of the following:
 
 ```bash
 # Normal
