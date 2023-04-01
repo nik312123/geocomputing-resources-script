@@ -127,8 +127,7 @@ run_command_conditional \
 # Adds the SSH key to the SSH config file if it is not already there
 add_key_to_ssh_config_false_before=$'SSH key has not been added to SSH config file. ❌\n\n'
 add_key_to_ssh_config_false_before+=$'Adding SSH key to SSH config file... 📝\n\n'
-add_key_to_ssh_config_text=$'\nHost github.com\n    IgnoreUnknown UseKeychain'
-add_key_to_ssh_config_text+=$'\n    AddKeysToAgent yes\n    UseKeychain yes'
+add_key_to_ssh_config_text=$'\nHost github.com\n    AddKeysToAgent yes'
 add_key_to_ssh_config_text+=$'\n    IdentityFile ~/.ssh/id_nik312123_github_rsa\n'
 run_command_conditional \
     --check-command "grep -q 'id_nik312123_github_rsa' ~/.ssh/config" \
