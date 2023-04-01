@@ -12,7 +12,7 @@ To run the aforementioned installation script if you have bash 4 or higher, you 
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geocomputing_requirements.sh" )
 ```
 
-To run the script in verbose mode (prints commands being run and their outputs) in bash 4 or higher, add the `-v` flag like so:
+To run the script in verbose mode (prints commands being run and their outputs) in bash 4 or higher, add the `-v` or `--verbose` flag like so:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/install_geocomputing_requirements.sh" ) -v
@@ -28,7 +28,7 @@ To run this script locally, you may run the following:
 # Normal
 ./install_geocomputing_requirements.sh
 
-# Verbose
+# Verbose (can also use --verbose)
 ./install_geocomputing_requirements.sh -v
 ```
 
@@ -46,7 +46,7 @@ To run the aforementioned installation script on bash 4 or higher, you may run t
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/setup_ssh_key_for_github.sh" )
 ```
 
-To run the script in verbose mode (prints commands being run and their outputs) on bash 4 or higher, add the `-v` flag like so:
+To run the script in verbose mode (prints commands being run and their outputs) on bash 4 or higher, add the `-v` or `--verbose` flag like so:
 
 ```bash
 bash <( curl -fsSL "https://raw.githubusercontent.com/nik312123/geocomputing-resources-script/master/setup_ssh_key_for_github.sh" ) -v
@@ -62,6 +62,6 @@ To run this script locally, you may run the following:
 # Normal
 ./setup_ssh_key_for_github.sh
 
-# Verbose
+# Verbose (can also use --verbose)
 ./setup_ssh_key_for_github.sh -v
 ```
