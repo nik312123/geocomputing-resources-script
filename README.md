@@ -85,3 +85,17 @@ To run this script locally, navigate into the unzipped or cloned repository usin
 # Verbose (can also use --verbose)
 ./setup_ssh_key_for_github.sh -v
 ```
+
+### Moving SSH key to a different device:
+
+If you originally ran the SSH key setup script on a device (let's say device A) and want to instead have the SSH key set up on another device (let's say device B), then you can run the following to remove the key from your GitHub account on device A:
+
+```bash
+gh ssh-key delete -y "$(gh ssh-key list | grep "Geocomputing SSH key" | awk -F '\t' '{print $NF}')"
+```
+
+Then, you can run the script above normally on device B.
+
+### Adding the SSH key to a multiple devices:
+
+Alternatively, if you want to create multiple SSH keys for different devices, then you can run the aforementioned SSH setup script for one device and then [follow this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for any additional SSH keys.
