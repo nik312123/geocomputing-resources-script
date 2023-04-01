@@ -6,7 +6,13 @@ The goal of this script is to install all software needed for geocomputing.
 
 ### Introduction:
 
-Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
+This script's purpose is to install any necessary geocomputing resources for your machine.
+
+This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
+
+Note that the script can be run multiple times without any issues. It will automatically detect what is already installed and will not reinstall them again.
+
+In fact, it will ensure that all of the installed components are up to date and is therefore encouraged!
 
 ### Remote installation methods:
 
@@ -38,16 +44,17 @@ To run this script locally, navigate into the unzipped or cloned repository usin
 ./install_geocomputing_requirements.sh -v
 ```
 
-Note that the script can be run multiple times without any issues. It will automatically detect what is already installed and will not reinstall them again.
-
-In fact, it will ensure that all of the installed components are up to date and is therefore encouraged!
-
 ## 2. Running GitHub SSH key setup script
-
 
 ### Introduction:
 
-Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
+This script's purpose is to set up your SSH key for use with GitHub. Note that this specific script is only made to work for a single device by nature.
+
+This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
+
+Note that the script can be run multiple times without any issues. It will automatically detect what is already installed and will not reinstall them again.
+
+In fact, it will ensure that all of the installed components are up to date and is therefore encouraged!
 
 ### Remote installation methods:
 
