@@ -95,7 +95,7 @@ run_command_conditional \
 
 # Adds the ssh-agent startup command to the login files if it is not already there
 add_start_ssh_agent_false_after=$'SSH agent startup code has been added to login files! ✅\n\n'
-add_start_ssh_agent_false_after+=$'Now, please restart your Terminal to use the updated bash and '
+add_start_ssh_agent_false_after+=$'Now, please restart your Terminal to load SSH agent and '
 add_start_ssh_agent_false_after+=$'run this script again.\n\n'
 add_start_ssh_agent_false_before=$'SSH agent is not running. ❌\n\n'
 add_start_ssh_agent_false_before+=$'Adding code to start SSH agent in login files... 📝\n\n'
