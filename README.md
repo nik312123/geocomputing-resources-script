@@ -25,8 +25,6 @@ It would also be worth downloading the repository and running the script locally
 To run this script locally, you may run the following:
 
 ```bash
-
-```bash
 # Normal
 ./install_geocomputing_requirements.sh
 
