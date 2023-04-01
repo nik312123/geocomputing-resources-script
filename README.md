@@ -2,7 +2,7 @@
 
 The goal of this script is to install all software needed for geocomputing.
 
-## Running geocomputing resources script
+## 1. Running geocomputing resources script
 
 Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
 
@@ -36,7 +36,7 @@ Note that the script can be run multiple times without any issues. It will autom
 
 In fact, it will ensure that all of the installed components are up to date and is therefore encouraged!
 
-## Running GitHub ssh key setup script
+## 2. Running GitHub SSH key setup script
 
 Note: This script can be run on macOS or Ubuntu (including Ubuntu via WSL on Windows).
 
