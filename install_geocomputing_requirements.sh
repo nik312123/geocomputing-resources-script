@@ -306,17 +306,19 @@ function install_requirements_macos {
         --false-echo-newline \
         --false-command "sudo sh -c 'printf \"\n$(brew --prefix)/bin/bash\n\" >> /etc/shells'"
     
-    # If your bash version is not 5.0+, link Terminal to the newest version installed if /bin/bash
-    # is the default
+    # If your bash version is not 5.0+ or your Terminal is /bin/bash, link Terminal to the newest
+    # version installed and prompt the user to restart their Terminal
+    bash_version_check_command="[[ \"\${BASH_VERSION%%.*}\" -gt 4 ]] "
+    bash_version_check_command+="&& [[ \"\$SHELL\" != \"/bin/bash\" ]]"
     bash_version_false_before=$'Your current bash is not up to date in your current shell. ❌\n\n'
     bash_version_false_before+=$'Updating your current bash for your shell... 🔼\n\n'
     bash_version_false_after=$'Your current bash is now up to date in your current shell! ✅\n\n'
     bash_version_false_after+=$'Now, please restart your Terminal to use the updated bash and run '
     bash_version_false_after+=$'this script again.\n\n'
-    bash_version_false_command="if [ \"\$SHELL\" = \"/bin/bash\" ]; then chsh -s "
+    bash_version_false_command="if [[ \"\$SHELL\" = \"/bin/bash\" ]]; then chsh -s "
     bash_version_false_command+="\"\$(brew --prefix)/bin/bash\"; fi"
     run_command_conditional \
-        --check-command "[[ \${BASH_VERSION%%.*} -gt 4 ]]" \
+        --check-command "$bash_version_check_command" \
         --true-print-before $'Your bash version is up to date in your current shell! ✅\n\n' \
         --true-print-after "" \
         --true-command "" \
