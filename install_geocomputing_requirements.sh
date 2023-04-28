@@ -481,31 +481,38 @@ function install_requirements_linux_wsl {
     # Installs or updates the required Python packages
     install_required_python_packages
     
-    # Retrieves the Windows username
-    # shellcheck disable=SC2016
-    windows_username_command='windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '
-    windows_username_command+=''\''\r'\'' 2>/dev/null)"'
-    if $echo_on; then
-        printf "> %s\n\n" "$windows_username_command"
-    fi
-    
-    if ! windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r' 2>/dev/null)"; then
-        print_error_and_exit "$windows_username_command"
-    elif [[ "$windows_username" == "" ]]; then
-        print_error_and_exit "$windows_username_command"
+    # Gets the device home directory, depending on whether Ubuntu is on WSL or not
+    if [[ "$(uname -r)" =~ "Microsoft" ]]; then
+        # Retrieves the Windows username
+        # shellcheck disable=SC2016
+        windows_username_command='windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null'
+        windows_username_command+=' | tr -d '\''\r'\'' 2>/dev/null)"'
+        if $echo_on; then
+            printf "> %s\n\n" "$windows_username_command"
+        fi
+        
+        if ! windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r' 2>/dev/null)"; then
+            print_error_and_exit "$windows_username_command"
+        elif [[ "$windows_username" == "" ]]; then
+            print_error_and_exit "$windows_username_command"
+        fi
+        
+        device_home_directory="/mnt/c/Users/$windows_username"
+    else
+        device_home_directory="$HOME"
     fi
     
     # Creates the git directory if it does not already exist
     git_directory_false_before=$'The git directory does not exist. ❌\n\n'
     git_directory_false_before+=$'Creating the git directory... 📁\n\n'
     run_command_conditional \
-        --check-command "test -d /mnt/c/Users/$windows_username/git" \
+        --check-command "test -d \"$device_home_directory/git\"" \
         --true-print-before $'The git directory exists! ✅\n\n' \
         --true-print-after "" \
         --true-command "" \
         --false-print-before "$git_directory_false_before" \
         --false-print-after $'The git directory has been created! ✅\n\n' \
-        --false-command "mkdir /mnt/c/Users/$windows_username/git"
+        --false-command "mkdir \"$device_home_directory/git\""
     
     # Adds symbolic links to common Windows directories if they do not already exist (only for WSL)
     if [[ "$(uname -r)" =~ "Microsoft" ]]; then
