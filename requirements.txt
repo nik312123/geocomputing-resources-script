@@ -105,8 +105,6 @@ Pillow
 pip-check
 pipupgrade
 platformdirs
-powerline-gitstatus
-powerline-status
 prometheus-client
 prompt-toolkit
 protobuf
