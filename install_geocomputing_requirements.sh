@@ -491,7 +491,8 @@ function install_requirements_linux_wsl {
             printf "> %s\n\n" "$windows_username_command"
         fi
         
-        if ! windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r' 2>/dev/null)"; then
+        if ! windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null \
+           | tr -d '\r' 2>/dev/null)"; then
             print_error_and_exit "$windows_username_command"
         elif [[ "$windows_username" == "" ]]; then
             print_error_and_exit "$windows_username_command"
@@ -524,22 +525,23 @@ function install_requirements_linux_wsl {
             windows_symlinks_check_command+="test -e \"$HOME/$symlink_name\" && "
         done
         windows_symlinks_check_command=${windows_symlinks_check_command% && }
-        windows_symlinks_false_before=$'The symlinks to common Windows directories do not exist. ❌\n\n'
-        windows_symlinks_false_before+=$'Adding symlinks to common Windows directories... 🔗\n\n'
+        windows_symlinks_false_before=$'The symlinks to common Windows dirs do not exist. ❌\n\n'
+        windows_symlinks_false_before+=$'Adding symlinks to common Windows dirs... 🔗\n\n'
         windows_symlinks_false_command=""
         for i in "${!windows_symlink_names[@]}"; do
-            windows_symlinks_false_command+="{ test -h \"$HOME/${windows_symlink_names[$i]}\" || ln -s "
-            windows_symlinks_false_command+="\"/mnt/c/Users/$windows_username${windows_symlink_dirs[$i]}\" "
-            windows_symlinks_false_command+="\"$HOME/${windows_symlink_names[$i]}\"; } && "
+            windows_symlinks_false_command+="{ test -h \"$HOME/${windows_symlink_names[$i]}\" || ln"
+            windows_symlinks_false_command+=" -s \"$device_home_directory"
+            windows_symlinks_false_command+="${windows_symlink_dirs[$i]}\" \"$HOME/"
+            windows_symlinks_false_command+="${windows_symlink_names[$i]}\"; } && "
         done
         windows_symlinks_false_command=${windows_symlinks_false_command% && }
         run_command_conditional \
             --check-command "$windows_symlinks_check_command" \
-            --true-print-before $'The symlinks to common Windows directories already exist! ✅\n\n' \
+            --true-print-before $'The symlinks to common Windows dirs already exist! ✅\n\n' \
             --true-print-after "" \
             --true-command "" \
             --false-print-before "$windows_symlinks_false_before" \
-            --false-print-after $'The symlinks to common Windows directories have been added! ✅\n\n' \
+            --false-print-after $'The symlinks to common Windows dirs have been added! ✅\n\n' \
             --false-command "$windows_symlinks_false_command"
     fi
 }
