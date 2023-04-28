@@ -99,3 +99,15 @@ Then, you can run the script above normally on device B.
 ### Adding the SSH key to a multiple devices:
 
 Alternatively, if you want to create multiple SSH keys for different devices, then you can run the aforementioned SSH setup script for one device and then [follow this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for any additional SSH keys.
+
+## Video guides:
+
+### 1. Geocomputing initial setup
+
+- [Windows video](https://youtu.be/FTM1roZ5Cvw)
+- [Ubuntu video](https://youtu.be/FTM1roZ5Cvw?t=514) (Note: Reuse of Windows video but starts at 8:34 due to sufficient similarity)
+- [macOS video](https://youtu.be/vA9tWClzT2g)
+
+### 2. PyCharm setup completion and usage
+
+- [OS-independent video](https://youtu.be/ziNgTmoSyko)
