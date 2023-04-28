@@ -37,7 +37,7 @@ docopt
 docutils
 executing
 fastjsonschema
-Fiona==1.8.22
+Fiona==1.8.22 # https://github.com/perrygeo/python-rasterstats/issues/281
 folium
 fonttools
 fqdn
