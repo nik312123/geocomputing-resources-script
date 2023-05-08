@@ -110,4 +110,4 @@ Alternatively, if you want to create multiple SSH keys for different devices, th
 
 ### 2. PyCharm setup completion and usage
 
-- [OS-independent video](https://youtu.be/ziNgTmoSyko)
+- [OS-independent video](https://youtu.be/U0vqm8y0-IM)
