@@ -482,7 +482,7 @@ function install_requirements_linux_wsl {
     install_required_python_packages
     
     # Gets the device home directory, depending on whether Ubuntu is on WSL or not
-    if [[ "$(uname -r)" =~ "Microsoft" ]]; then
+    if uname -r | grep -qi microsoft; then
         # Retrieves the Windows username
         # shellcheck disable=SC2016
         windows_username_command='windows_username="$(cmd.exe /c "echo %USERNAME%" 2>/dev/null'
@@ -516,7 +516,7 @@ function install_requirements_linux_wsl {
         --false-command "mkdir \"$device_home_directory/git\""
     
     # Adds symbolic links to common Windows directories if they do not already exist (only for WSL)
-    if [[ "$(uname -r)" =~ "Microsoft" ]]; then
+    if uname -r | grep -qi microsoft; then
         windows_symlink_names=("Home" "Desktop" "Documents" "Downloads" "git")
         windows_symlink_dirs=("" "/Desktop" "/Documents" "/Downloads" "/git")
         windows_symlinks_check_command=""
